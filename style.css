@@ -1,62 +1,60 @@
 body {
+  font-family: Arial, sans-serif;
   background-color: #121212;
-  color: #e0e0e0;
-  font-family: 'Poppins', sans-serif;
+  color: #eee;
   margin: 0;
   padding: 0;
-  text-align: center;
 }
 
 header {
   background-color: #1e1e1e;
-  padding: 20px;
-  box-shadow: 0 2px 10px rgba(0,0,0,0.5);
+  padding: 15px 20px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
 }
 
-h1 {
-  color: #00ffcc;
+header h1 {
   margin: 0;
 }
 
-#game-list {
-  display: flex;
-  flex-wrap: wrap;
-  justify-content: center;
-  padding: 30px;
-  gap: 25px;
-}
-
-.game-card {
-  background-color: #222;
-  border-radius: 10px;
-  padding: 15px;
-  width: 200px;
-  transition: transform 0.3s;
-}
-
-.game-card:hover {
-  transform: scale(1.05);
-}
-
-.game-card img {
-  width: 100%;
-  border-radius: 8px;
-}
-
-a {
-  display: inline-block;
-  margin-top: 10px;
-  background-color: #00ffcc;
-  color: #000;
+nav a {
+  color: #aaa;
   text-decoration: none;
-  padding: 8px 12px;
-  border-radius: 5px;
+  margin-left: 15px;
+  transition: color 0.3s;
+}
+
+nav a:hover, nav a.active {
+  color: #fff;
+}
+
+main {
+  padding: 20px;
 }
 
 footer {
+  text-align: center;
+  padding: 15px;
   background-color: #1e1e1e;
-  padding: 10px;
-  margin-top: 40px;
-  font-size: 14px;
-  color: #999;
+  margin-top: 20px;
+  color: #888;
+}
+
+.games-list {
+  list-style: none;
+  padding: 0;
+}
+
+.games-list li {
+  margin: 10px 0;
+}
+
+.games-list a {
+  color: #00aaff;
+  text-decoration: none;
+}
+
+.games-list a:hover {
+  text-decoration: underline;
 }
