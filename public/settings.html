@@ -8,7 +8,7 @@
     />
     <title>Scramjet Settings</title>
 
-    <link rel="shortcut icon" content="favicon.webp" />
+    <link rel="shortcut icon" href="favicon.webp" />
     <link rel="stylesheet" href="index.css" />
 
     <style>
@@ -18,6 +18,8 @@
         --fg: #f9fafb;
         --fg-dim: #9ca3af;
         --accent: #3b82f6;
+        --accent-soft: rgba(37, 99, 235, 0.3);
+        --border-subtle: rgba(148, 163, 184, 0.25);
         --header-h: 56px;
       }
 
@@ -34,6 +36,7 @@
           sans-serif;
       }
 
+      /* HEADER */
       .site-header {
         position: sticky;
         top: 0;
@@ -108,35 +111,181 @@
       .settings-group {
         background: rgba(15, 23, 42, 0.95);
         border-radius: 16px;
-        border: 1px solid rgba(148, 163, 184, 0.25);
-        padding: 16px 16px 10px;
+        border: 1px solid var(--border-subtle);
+        padding: 16px 16px 14px;
         margin-bottom: 16px;
       }
 
       .settings-title {
         font-size: 14px;
         font-weight: 500;
-        margin-bottom: 8px;
+        margin-bottom: 10px;
+      }
+
+      .settings-help {
+        font-size: 12px;
+        color: var(--fg-dim);
+        margin-bottom: 12px;
       }
 
       .settings-row {
         display: flex;
-        justify-content: space-between;
+        gap: 10px;
         align-items: center;
+        margin-bottom: 10px;
         font-size: 13px;
-        margin-bottom: 8px;
       }
 
-      .settings-row span {
+      .settings-row label {
+        font-size: 13px;
+        color: var(--fg-dim);
+        min-width: 90px;
+      }
+
+      .settings-row input[type="text"],
+      .settings-row input[type="url"],
+      .settings-row select {
+        flex: 1;
+        padding: 6px 10px;
+        border-radius: 999px;
+        border: 1px solid rgba(148, 163, 184, 0.6);
+        background: #020617;
+        color: var(--fg);
+        font-size: 13px;
+        outline: none;
+      }
+
+      .settings-row input::placeholder {
+        color: #6b7280;
+      }
+
+      .settings-row select {
+        cursor: pointer;
+      }
+
+      .btn-pill {
+        padding: 5px 12px;
+        border-radius: 999px;
+        border: 1px solid rgba(148, 163, 184, 0.8);
+        background: transparent;
+        color: var(--fg-dim);
+        font-size: 12px;
+        cursor: pointer;
+        white-space: nowrap;
+      }
+
+      .btn-pill:hover {
+        background: var(--accent-soft);
+        color: var(--fg);
+        border-color: rgba(59, 130, 246, 0.9);
+      }
+
+      .btn-pill.primary {
+        background: var(--accent-soft);
+        color: var(--fg);
+        border-color: rgba(59, 130, 246, 0.9);
+      }
+
+      .btn-pill.primary.inactive {
+        opacity: 0.6;
+        background: transparent;
+        border-color: rgba(148, 163, 184, 0.8);
         color: var(--fg-dim);
       }
 
-      .pill {
-        padding: 4px 10px;
+      .theme-toggle {
+        display: inline-flex;
+        padding: 3px;
         border-radius: 999px;
-        border: 1px solid rgba(148, 163, 184, 0.4);
+        background: rgba(15, 23, 42, 0.9);
+        border: 1px solid rgba(148, 163, 184, 0.7);
+      }
+
+      .theme-toggle button {
+        border: none;
+        background: transparent;
+        padding: 5px 12px;
+        border-radius: 999px;
+        font-size: 12px;
+        color: var(--fg-dim);
+        cursor: pointer;
+      }
+
+      .theme-toggle button.active {
+        background: var(--accent-soft);
+        color: var(--fg);
+      }
+
+      .settings-footer-note {
         font-size: 11px;
         color: var(--fg-dim);
+        margin-top: 6px;
+      }
+
+      /* LIGHT THEME OVERRIDES FOR THIS PAGE */
+      body.theme-light {
+        background: #f3f4f6;
+        color: #020617;
+      }
+
+      body.theme-light .site-header {
+        background: rgba(249, 250, 251, 0.9);
+        border-bottom: 1px solid rgba(148, 163, 184, 0.6);
+      }
+
+      body.theme-light .site-title span {
+        color: #6b7280;
+      }
+
+      body.theme-light .site-nav a {
+        color: #4b5563;
+      }
+
+      body.theme-light .site-nav a.active {
+        background: rgba(37, 99, 235, 0.12);
+        border-color: rgba(59, 130, 246, 0.9);
+        color: #111827;
+      }
+
+      body.theme-light .settings-group {
+        background: #ffffff;
+        border-color: rgba(148, 163, 184, 0.6);
+      }
+
+      body.theme-light .settings-row input[type="text"],
+      body.theme-light .settings-row input[type="url"],
+      body.theme-light .settings-row select {
+        background: #f9fafb;
+        color: #111827;
+        border-color: rgba(148, 163, 184, 0.9);
+      }
+
+      body.theme-light .settings-row input::placeholder {
+        color: #9ca3af;
+      }
+
+      body.theme-light .btn-pill {
+        color: #374151;
+        border-color: rgba(148, 163, 184, 0.9);
+      }
+
+      body.theme-light .btn-pill.primary {
+        background: rgba(37, 99, 235, 0.12);
+        color: #1f2937;
+      }
+
+      body.theme-light .theme-toggle {
+        background: #f9fafb;
+        border-color: rgba(148, 163, 184, 0.9);
+      }
+
+      body.theme-light .theme-toggle button {
+        color: #4b5563;
+      }
+
+      body.theme-light .theme-toggle button.active {
+        background: rgba(37, 99, 235, 0.16);
+        color: #111827;
       }
     </style>
   </head>
@@ -157,45 +306,265 @@
     <main>
       <h1>Settings</h1>
       <p class="sub">
-        Placeholder settings shell. You can wire themes, tab cloaking, accounts, etc.
-        into these groups.
+        Tab cloaking and appearance. Values are stored in this browser using localStorage.
       </p>
 
-      <div class="settings-group">
-        <div class="settings-title">Appearance</div>
-        <div class="settings-row">
-          <span>Theme</span>
-          <span class="pill">Dark (fixed)</span>
-        </div>
-        <div class="settings-row">
-          <span>Animations</span>
-          <span class="pill">On</span>
-        </div>
-      </div>
-
+      <!-- TAB CLOAKING -->
       <div class="settings-group">
         <div class="settings-title">Tab Cloaking</div>
-        <div class="settings-row">
-          <span>Tab title</span>
-          <span class="pill">"Google Docs"</span>
+        <div class="settings-help">
+          Change how this tab looks in the browser bar. Presets work instantly. Custom lets you set
+          your own title and favicon URL.
         </div>
+
         <div class="settings-row">
-          <span>Favicon</span>
-          <span class="pill">Default</span>
+          <label for="cloak-preset">Preset</label>
+          <select id="cloak-preset">
+            <option value="default">Scramjet (default)</option>
+            <option value="gdocs">Google Docs</option>
+            <option value="gclass">Google Classroom</option>
+            <option value="gdrive">Google Drive</option>
+            <option value="khan">Khan Academy</option>
+            <option value="custom">Custom</option>
+          </select>
+        </div>
+
+        <div class="settings-row">
+          <label for="cloak-title">Custom title</label>
+          <input
+            type="text"
+            id="cloak-title"
+            placeholder="e.g. Untitled document - Google Docs"
+          />
+        </div>
+
+        <div class="settings-row">
+          <label for="cloak-favicon">Custom favicon</label>
+          <input
+            type="url"
+            id="cloak-favicon"
+            placeholder="https://example.com/favicon.ico"
+          />
+        </div>
+
+        <div class="settings-row" style="justify-content: flex-end;">
+          <button type="button" class="btn-pill primary" id="cloak-apply">
+            Apply cloaking
+          </button>
+        </div>
+
+        <div class="settings-footer-note">
+          This only affects this hub. Other pages have to include the same logic if you want global cloaking.
         </div>
       </div>
 
+      <!-- THEME -->
       <div class="settings-group">
-        <div class="settings-title">Account / Hub</div>
-        <div class="settings-row">
-          <span>Profile name</span>
-          <span class="pill">guest</span>
+        <div class="settings-title">Appearance</div>
+        <div class="settings-help">
+          Light or dark mode. Stored per browser. Other hub pages can read the same setting if they look at
+          <code>localStorage.sjTheme</code>.
         </div>
-        <div class="settings-row">
-          <span>Data</span>
-          <span class="pill">Local only</span>
+
+        <div class="settings-row" style="justify-content: space-between;">
+          <label>Theme</label>
+          <div class="theme-toggle">
+            <button type="button" id="theme-dark">Dark</button>
+            <button type="button" id="theme-light">Light</button>
+          </div>
         </div>
       </div>
     </main>
+
+    <script>
+      // ---------- TAB CLOAKING ----------
+
+      const TAB_PRESETS = {
+        default: {
+          label: "Scramjet (default)",
+          title: "Scramjet Hub",
+          favicon: "favicon.webp",
+        },
+        gdocs: {
+          label: "Google Docs",
+          title: "Untitled document - Google Docs",
+          favicon:
+            "https://ssl.gstatic.com/docs/doclist/images/drive_icon_16.png",
+        },
+        gclass: {
+          label: "Google Classroom",
+          title: "Classes",
+          favicon: "https://ssl.gstatic.com/classroom/favicon.png",
+        },
+        gdrive: {
+          label: "Google Drive",
+          title: "My Drive - Google Drive",
+          favicon:
+            "https://ssl.gstatic.com/docs/doclist/images/drive_16.png",
+        },
+        khan: {
+          label: "Khan Academy",
+          title: "Dashboard | Khan Academy",
+          favicon: "https://cdn.kastatic.org/images/favicon.ico",
+        },
+      };
+
+      function getFaviconLinks() {
+        const links = Array.from(
+          document.querySelectorAll(
+            'link[rel="icon"], link[rel="shortcut icon"]'
+          )
+        );
+        if (links.length > 0) return links;
+
+        // If nothing exists, create one
+        const link = document.createElement("link");
+        link.rel = "icon";
+        document.head.appendChild(link);
+        return [link];
+      }
+
+      function applyTabCloak({ mode, presetKey, title, favicon }) {
+        // Save to localStorage
+        if (mode) localStorage.setItem("sjTabMode", mode);
+        if (presetKey) localStorage.setItem("sjTabPreset", presetKey);
+        if (title !== undefined) localStorage.setItem("sjTabTitle", title);
+        if (favicon !== undefined)
+          localStorage.setItem("sjTabFavicon", favicon);
+
+        // Resolve final values
+        let finalTitle = title;
+        let finalFavicon = favicon;
+
+        if (mode === "preset" && presetKey && TAB_PRESETS[presetKey]) {
+          finalTitle = TAB_PRESETS[presetKey].title;
+          finalFavicon = TAB_PRESETS[presetKey].favicon;
+        } else if (mode === "custom") {
+          // If custom but nothing entered, do not apply empty
+          if (!finalTitle) {
+            finalTitle = document.title || "Scramjet Hub";
+          }
+        }
+
+        if (finalTitle) {
+          document.title = finalTitle;
+        }
+
+        if (finalFavicon) {
+          const links = getFaviconLinks();
+          links.forEach((l) => (l.href = finalFavicon));
+        }
+      }
+
+      function initTabCloakUI() {
+        const presetSelect = document.getElementById("cloak-preset");
+        const titleInput = document.getElementById("cloak-title");
+        const favInput = document.getElementById("cloak-favicon");
+        const applyBtn = document.getElementById("cloak-apply");
+
+        const savedMode = localStorage.getItem("sjTabMode") || "preset";
+        const savedPreset =
+          localStorage.getItem("sjTabPreset") || "default";
+        const savedTitle = localStorage.getItem("sjTabTitle") || "";
+        const savedFav = localStorage.getItem("sjTabFavicon") || "";
+
+        // Init UI from saved values
+        presetSelect.value = savedMode === "custom" ? "custom" : savedPreset;
+        if (savedMode === "custom") {
+          titleInput.value = savedTitle;
+          favInput.value = savedFav;
+        }
+
+        // Apply on load
+        if (savedMode === "custom") {
+          applyTabCloak({
+            mode: "custom",
+            title: savedTitle,
+            favicon: savedFav,
+          });
+        } else {
+          applyTabCloak({
+            mode: "preset",
+            presetKey: savedPreset,
+          });
+        }
+
+        // When preset changes
+        presetSelect.addEventListener("change", () => {
+          const val = presetSelect.value;
+          if (val === "custom") {
+            applyTabCloak({
+              mode: "custom",
+              title: titleInput.value.trim(),
+              favicon: favInput.value.trim(),
+            });
+          } else {
+            applyTabCloak({ mode: "preset", presetKey: val });
+          }
+        });
+
+        // Apply custom button
+        applyBtn.addEventListener("click", () => {
+          const title = titleInput.value.trim();
+          const fav = favInput.value.trim();
+          applyTabCloak({
+            mode: "custom",
+            title,
+            favicon: fav,
+          });
+          presetSelect.value = "custom";
+        });
+      }
+
+      // ---------- THEME ----------
+
+      function applyTheme(mode) {
+        const body = document.body;
+        const darkBtn = document.getElementById("theme-dark");
+        const lightBtn = document.getElementById("theme-light");
+
+        if (!mode) mode = "dark";
+
+        if (mode === "light") {
+          body.classList.add("theme-light");
+        } else {
+          body.classList.remove("theme-light");
+        }
+
+        localStorage.setItem("sjTheme", mode);
+
+        if (darkBtn && lightBtn) {
+          if (mode === "dark") {
+            darkBtn.classList.add("active");
+            lightBtn.classList.remove("active");
+          } else {
+            lightBtn.classList.add("active");
+            darkBtn.classList.remove("active");
+          }
+        }
+      }
+
+      function initThemeUI() {
+        const darkBtn = document.getElementById("theme-dark");
+        const lightBtn = document.getElementById("theme-light");
+        const saved = localStorage.getItem("sjTheme") || "dark";
+
+        applyTheme(saved);
+
+        if (darkBtn) {
+          darkBtn.addEventListener("click", () => applyTheme("dark"));
+        }
+        if (lightBtn) {
+          lightBtn.addEventListener("click", () => applyTheme("light"));
+        }
+      }
+
+      // ---------- INIT ----------
+
+      document.addEventListener("DOMContentLoaded", () => {
+        initTabCloakUI();
+        initThemeUI();
+      });
+    </script>
   </body>
 </html>
