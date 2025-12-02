@@ -1,0 +1,287 @@
+<!doctype html>
+<html>
+  <head>
+    <meta charset="utf-8" />
+    <meta
+      name="viewport"
+      content="width=device-width, initial-scale=1.0, shrink-to-fit=no"
+    />
+    <title>S0LACE</title>
+
+    <link rel="shortcut icon" content="favicon.ico" />
+    <link rel="stylesheet" href="index.css" />
+    <script src="global-hub.js" defer></script>
+
+    <style>
+      :root {
+        --bg: #050814;
+        --panel: #020617;
+        --fg: #f9fafb;
+        --fg-dim: #9ca3af;
+        --accent: #3b82f6;
+        --header-h: 56px;
+      }
+
+      * {
+        box-sizing: border-box;
+      }
+
+      body {
+        margin: 0;
+        min-height: 100vh;
+        background: radial-gradient(circle at top, #0b1220 0, #020617 55%, #000 100%);
+        color: var(--fg);
+        font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI",
+          sans-serif;
+      }
+
+      .site-header {
+        position: sticky;
+        top: 0;
+        z-index: 50;
+        height: var(--header-h);
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        padding: 0 18px;
+        background: rgba(3, 7, 18, 0.9);
+        backdrop-filter: blur(10px);
+        border-bottom: 1px solid rgba(148, 163, 184, 0.1);
+      }
+
+      .site-title {
+        font-size: 15px;
+        font-weight: 600;
+      }
+
+      .site-title span {
+        opacity: 0.6;
+        font-weight: 400;
+        font-size: 12px;
+        margin-left: 4px;
+      }
+
+      .site-nav {
+        display: flex;
+        gap: 10px;
+        font-size: 13px;
+      }
+
+      .site-nav a {
+        text-decoration: none;
+        padding: 6px 10px;
+        border-radius: 999px;
+        border: 1px solid transparent;
+        color: var(--fg-dim);
+        cursor: pointer;
+        transition: 0.15s ease;
+      }
+
+      .site-nav a:hover {
+        border-color: rgba(148, 163, 184, 0.4);
+        color: var(--fg);
+        background: rgba(15, 23, 42, 0.8);
+      }
+
+      .site-nav a.active {
+        border-color: rgba(59, 130, 246, 0.8);
+        background: rgba(37, 99, 235, 0.35);
+        color: var(--fg);
+      }
+
+      main {
+        padding: 24px 16px 32px;
+        max-width: 1100px;
+        margin: 0 auto;
+      }
+
+      h1 {
+        font-size: 22px;
+        margin-bottom: 6px;
+      }
+
+      /* search bar above games */
+      .games-search-wrap {
+        margin: 10px 0 18px;
+      }
+
+      #game-search {
+        width: 100%;
+        max-width: 320px;
+        padding: 7px 12px;
+        border-radius: 999px;
+        border: 1px solid rgba(148, 163, 184, 0.6);
+        background: rgba(15, 23, 42, 0.95);
+        color: var(--fg);
+        font-size: 13px;
+        outline: none;
+      }
+
+      #game-search::placeholder {
+        color: #6b7280;
+      }
+
+      .game-grid {
+        display: grid;
+        grid-template-columns: repeat(6, minmax(0, 1fr)); /* 6 per row */
+        gap: 16px;
+      }
+
+      .game-card {
+        background: var(--panel);
+        border-radius: 14px;
+        padding: 10px;
+        border: 1px solid rgba(148, 163, 184, 0.2);
+        display: flex;
+        flex-direction: column;
+        cursor: pointer;
+        text-decoration: none;
+        color: var(--fg);
+        transition: transform 0.15s ease, box-shadow 0.15s ease,
+          border-color 0.15s ease;
+      }
+
+      .game-thumb {
+        width: 100%;
+        aspect-ratio: 1 / 1;
+        border-radius: 10px;
+        background: radial-gradient(circle at top, #1f2937, #020617);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        margin-bottom: 0; /* no space for text below anymore */
+        overflow: hidden;
+        position: relative; /* for overlay */
+      }
+
+      .game-thumb img {
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
+        display: block;
+      }
+
+      .game-overlay {
+        position: absolute;
+        inset: 0;
+        background: rgba(0, 0, 0, 0.55);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        opacity: 0;
+        transition: opacity 0.15s ease;
+        font-size: 13px;
+        font-weight: 500;
+        text-align: center;
+        padding: 6px;
+      }
+
+      .game-card:hover .game-overlay {
+        opacity: 1;
+      }
+
+      .game-card:hover {
+        transform: translateY(-2px);
+        border-color: rgba(59, 130, 246, 0.8);
+        box-shadow: 0 18px 40px rgba(15, 23, 42, 0.9);
+      }
+
+      /* "no results" text */
+      #game-empty {
+        display: none;
+        margin-top: 12px;
+        font-size: 12px;
+        color: var(--fg-dim);
+      }
+
+      /* optional: make it less cramped on small screens */
+      @media (max-width: 900px) {
+        .game-grid {
+          grid-template-columns: repeat(3, minmax(0, 1fr));
+        }
+      }
+
+      @media (max-width: 600px) {
+        .game-grid {
+          grid-template-columns: repeat(2, minmax(0, 1fr));
+        }
+      }
+    </style>
+  </head>
+
+  <body>
+    <header class="site-header">
+      <div class="site-title">
+        S0LACE
+      </div>
+      <nav class="site-nav">
+        <a href="index.html">Home</a>
+        <a href="games.html">Games</a>
+        <a href="media.html">Media</a>
+        <a href="apps.html"class="active">Apps</a>
+        <a href="settings.html">Settings</a>
+      </nav>
+    </header>
+
+    <main>
+      <h1>Apps</h1>
+
+      <!-- SEARCH -->
+      <div class="games-search-wrap">
+        <input
+          id="game-search"
+          type="text"
+          placeholder="Search games..."
+          autocomplete="off"
+        />
+      </div>
+
+      <div class="game-grid" id="game-grid">
+        <!-- Update the src paths to your real thumbnails and game files -->
+        <a
+          class="game-card"
+          href="player.html?game=games/retrobowl/index.html"
+          data-name="retro bowl"
+        >
+          <div class="game-thumb">
+            <img src="thumbs/retrobowl.png" alt="Retro Bowl" />
+            <div class="game-overlay">Retro Bowl</div>
+          </div>
+        </a>
+
+        
+
+        <!-- add more cards here, same structure
+             just remember to set data-name="whatever you want the search to match" -->
+      </div>
+
+      <div id="game-empty">No apps match that search.</div>
+    </main>
+
+    <script>
+      const searchInput = document.getElementById("game-search");
+      const cards = Array.from(document.querySelectorAll(".game-card"));
+      const emptyMsg = document.getElementById("game-empty");
+
+      function filterGames() {
+        const q = searchInput.value.trim().toLowerCase();
+        let visibleCount = 0;
+
+        cards.forEach((card) => {
+          const name = (card.dataset.name || "").toLowerCase();
+          const match = !q || name.includes(q);
+          card.style.display = match ? "" : "none";
+          if (match) visibleCount++;
+        });
+
+        if (emptyMsg) {
+          emptyMsg.style.display = q && visibleCount === 0 ? "block" : "none";
+        }
+      }
+
+      if (searchInput) {
+        searchInput.addEventListener("input", filterGames);
+      }
+    </script>
+  </body>
+</html>
