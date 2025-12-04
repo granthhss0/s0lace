@@ -27,7 +27,6 @@
     <header class="site-header">
       <div class="site-title">
         S0LACE
-        <span>black dungeon // proxy hub</span>
       </div>
       <nav class="site-nav">
         <a href="index.html" class="active">Home</a>
@@ -38,176 +37,119 @@
       </nav>
     </header>
 
-    <main>
-
-      <!-- MAIN PROXY BLOCK -->
-      <section class="home-panel home-proxy-panel">
-        <div id="motd">
-          loading
-        </div>
-
-        <div style="margin-top: 14px;">
-          <div class="proxy-label">PR0XY &gt;</div>
-          <form id="sj-form">
-            <input
-              id="sj-search-engine"
-              value="https://www.google.com/search?q=%s"
-              type="hidden"
-            />
-            <input
-              id="sj-address"
-              type="text"
-              placeholder="type a url or search..."
-            />
-            <button class="proxy-btn" type="submit">GO</button>
-          </form>
-          <div id="sj-error"></div>
-          <pre id="sj-error-code"></pre>
-        </div>
-      </section>
-
-      <!-- POPULAR GAMES STRIP -->
-      <section class="home-panel home-popular-panel">
-        <div class="motd-label">POPULAR GAMES</div>
-
-        <div class="popular-wrap">
-          <div class="popular-track">
-            <!-- row 1 -->
+    <main class="home-main">
+      <div class="home-grid">
+        <!-- LEFT POPULAR COLUMN -->
+        <aside class="home-side">
+          <div class="side-label">POPULAR GAMES &lt;</div>
+          <div class="side-games">
             <a
-              class="popular-pill"
+              class="side-card"
               href="player.html?game=games/retrobowl/index.html"
             >
-              <span
-                class="pill-thumb"
+              <div
+                class="side-thumb"
                 style="background-image: url('thumbs/retrobowl.png');"
-              ></span>
-              <span class="pill-name">Retro&nbsp;Bowl</span>
+              ></div>
+              <div class="side-overlay">Retro Bowl</div>
             </a>
 
             <a
-              class="popular-pill"
+              class="side-card"
               href="player.html?game=games/slope/index.html"
             >
-              <span
-                class="pill-thumb"
+              <div
+                class="side-thumb"
                 style="background-image: url('thumbs/slope.png');"
-              ></span>
-              <span class="pill-name">Slope</span>
+              ></div>
+              <div class="side-overlay">Slope</div>
             </a>
 
             <a
-              class="popular-pill"
+              class="side-card"
               href="player.html?game=games/geometrydash/index.html"
             >
-              <span
-                class="pill-thumb"
+              <div
+                class="side-thumb"
                 style="background-image: url('thumbs/geometrydash.png');"
-              ></span>
-              <span class="pill-name">Geometry&nbsp;Dash</span>
-            </a>
-
-            <a
-              class="popular-pill"
-              href="player.html?game=games/monkey-mart/index.html"
-            >
-              <span
-                class="pill-thumb"
-                style="background-image: url('thumbs/monkey-mart.jpeg');"
-              ></span>
-              <span class="pill-name">Monkey&nbsp;Mart</span>
-            </a>
-
-            <a
-              class="popular-pill"
-              href="player.html?game=games/level-devil/index.html"
-            >
-              <span
-                class="pill-thumb"
-                style="background-image: url('thumbs/leveldevil.jpeg');"
-              ></span>
-              <span class="pill-name">Level&nbsp;Devil</span>
-            </a>
-
-            <a
-              class="popular-pill"
-              href="player.html?game=games/snow-rider/index.html"
-            >
-              <span
-                class="pill-thumb"
-                style="background-image: url('thumbs/snow-rider.jpeg');"
-              ></span>
-              <span class="pill-name">Snow&nbsp;Rider&nbsp;3D</span>
-            </a>
-
-            <!-- duplicate row so it loops clean -->
-            <a
-              class="popular-pill"
-              href="player.html?game=games/retrobowl/index.html"
-            >
-              <span
-                class="pill-thumb"
-                style="background-image: url('thumbs/retrobowl.png');"
-              ></span>
-              <span class="pill-name">Retro&nbsp;Bowl</span>
-            </a>
-
-            <a
-              class="popular-pill"
-              href="player.html?game=games/slope/index.html"
-            >
-              <span
-                class="pill-thumb"
-                style="background-image: url('thumbs/slope.png');"
-              ></span>
-              <span class="pill-name">Slope</span>
-            </a>
-
-            <a
-              class="popular-pill"
-              href="player.html?game=games/geometrydash/index.html"
-            >
-              <span
-                class="pill-thumb"
-                style="background-image: url('thumbs/geometrydash.png');"
-              ></span>
-              <span class="pill-name">Geometry&nbsp;Dash</span>
-            </a>
-
-            <a
-              class="popular-pill"
-              href="player.html?game=games/monkey-mart/index.html"
-            >
-              <span
-                class="pill-thumb"
-                style="background-image: url('thumbs/monkey-mart.jpeg');"
-              ></span>
-              <span class="pill-name">Monkey&nbsp;Mart</span>
-            </a>
-
-            <a
-              class="popular-pill"
-              href="player.html?game=games/level-devil/index.html"
-            >
-              <span
-                class="pill-thumb"
-                style="background-image: url('thumbs/leveldevil.jpeg');"
-              ></span>
-              <span class="pill-name">Level&nbsp;Devil</span>
-            </a>
-
-            <a
-              class="popular-pill"
-              href="player.html?game=games/snow-rider/index.html"
-            >
-              <span
-                class="pill-thumb"
-                style="background-image: url('thumbs/snow-rider.jpeg');"
-              ></span>
-              <span class="pill-name">Snow&nbsp;Rider&nbsp;3D</span>
+              ></div>
+              <div class="side-overlay">Geometry Dash</div>
             </a>
           </div>
-        </div>
-      </section>
+        </aside>
+
+        <!-- CENTER: BIG LOGO + PROXY -->
+        <section class="home-center">
+          <div class="home-logo-title">
+            <div class="home-logo-mark">S0LACE</div>
+            <div class="home-logo-sub">dungeon proxy gateway</div>
+          </div>
+
+          <section class="home-panel home-proxy-panel">
+            <div id="motd">
+              loading
+            </div>
+
+            <div style="margin-top: 14px;">
+              <div class="proxy-label">PR0XY &gt;</div>
+              <form id="sj-form">
+                <input
+                  id="sj-search-engine"
+                  value="https://www.google.com/search?q=%s"
+                  type="hidden"
+                />
+                <input
+                  id="sj-address"
+                  type="text"
+                  placeholder="type a url or search..."
+                />
+                <button class="proxy-btn" type="submit">GO</button>
+              </form>
+              <div id="sj-error"></div>
+              <pre id="sj-error-code"></pre>
+            </div>
+          </section>
+        </section>
+
+        <!-- RIGHT POPULAR COLUMN -->
+        <aside class="home-side home-side-right">
+          <div class="side-label">&gt; POPULAR GAMES</div>
+          <div class="side-games">
+            <a
+              class="side-card"
+              href="player.html?game=games/monkey-mart/index.html"
+            >
+              <div
+                class="side-thumb"
+                style="background-image: url('thumbs/monkey-mart.jpeg');"
+              ></div>
+              <div class="side-overlay">Monkey Mart</div>
+            </a>
+
+            <a
+              class="side-card"
+              href="player.html?game=games/level-devil/index.html"
+            >
+              <div
+                class="side-thumb"
+                style="background-image: url('thumbs/leveldevil.jpeg');"
+              ></div>
+              <div class="side-overlay">Level Devil</div>
+            </a>
+
+            <a
+              class="side-card"
+              href="player.html?game=games/snow-rider/index.html"
+            >
+              <div
+                class="side-thumb"
+                style="background-image: url('thumbs/snow-rider.jpeg');"
+              ></div>
+              <div class="side-overlay">Snow Rider 3D</div>
+            </a>
+          </div>
+        </aside>
+      </div>
     </main>
 
     <script>
