@@ -389,7 +389,7 @@
           </div>
         </a>
 
-      <a
+        <a
           class="game-card"
           href="player.html?game=games/bikeobby/index.html"
           data-name="bike-obby"
@@ -400,8 +400,7 @@
           </div>
         </a>
 
-
-      <a
+        <a
           class="game-card"
           href="player.html?game=games/balatro/index.html"
           data-name="balatro"
@@ -412,8 +411,7 @@
           </div>
         </a>
 
-
-      <a
+        <a
           class="game-card"
           href="player.html?game=games/hollow-knight/index.html"
           data-name="hollow-knight"
@@ -424,7 +422,7 @@
           </div>
         </a>
 
-      <a
+        <a
           class="game-card"
           href="player.html?game=games/buckshot-roulette/index.html"
           data-name="buckshot-roulette"
@@ -458,14 +456,41 @@
         </a>
       </div>
 
-      
       <div id="game-empty">No games match that search.</div>
     </main>
 
     <script>
       const searchInput = document.getElementById("game-search");
-      const cards = Array.from(document.querySelectorAll(".game-card"));
+      const grid = document.getElementById("game-grid");
       const emptyMsg = document.getElementById("game-empty");
+
+      // grab all cards once
+      let cards = Array.from(grid.querySelectorAll(".game-card"));
+
+      // sort A–Z, but keep "suggestions" pinned at the very top
+      function sortGamesAZ() {
+        const pinned = cards.find(
+          (card) => (card.dataset.name || "").toLowerCase() === "suggestions"
+        );
+
+        const rest = cards
+          .filter((card) => card !== pinned)
+          .sort((a, b) => {
+            const aName = (a.dataset.name || "").toLowerCase();
+            const bName = (b.dataset.name || "").toLowerCase();
+            if (aName < bName) return -1;
+            if (aName > bName) return 1;
+            return 0;
+          });
+
+        // clear and re-append in sorted order
+        grid.innerHTML = "";
+        if (pinned) grid.appendChild(pinned);
+        rest.forEach((card) => grid.appendChild(card));
+
+        // update cards array to match new order
+        cards = pinned ? [pinned, ...rest] : rest;
+      }
 
       function filterGames() {
         const q = (searchInput.value || "").trim().toLowerCase();
@@ -482,6 +507,9 @@
           emptyMsg.style.display = q && visibleCount === 0 ? "block" : "none";
         }
       }
+
+      // run sort once on load
+      sortGamesAZ();
 
       if (searchInput) {
         searchInput.addEventListener("input", filterGames);
