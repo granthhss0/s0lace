@@ -12,5 +12,12 @@ async function handleRequest(event) {
 }
 
 self.addEventListener('fetch', (event) => {
+  const url = new URL(event.request.url);
+
+  // let TMDB images go straight to the network (no proxy)
+  if (url.hostname === 'image.tmdb.org') {
+    return; // do NOT call respondWith -> browser handles normally
+  }
+
   event.respondWith(handleRequest(event));
 });
