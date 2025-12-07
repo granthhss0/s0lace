@@ -1,9 +1,16 @@
 // global-hub.js
-// Shared settings: tab cloaking + accent color across all pages.
+// Shared settings: tab cloaking + accent color + global theme/background across all pages.
 
 (function () {
   const ACCENT_KEY = "s0laceAccent";
   const CLOAK_KEY = "s0laceTabCloak";
+
+  const THEME_KEY = "s0laceTheme";
+  const BG_MODE_KEY = "s0laceBgMode";
+  const BG_URL_KEY = "s0laceBgUrl";
+  const MEDIA_CACHE_KEY = "s0laceMediaCache";
+
+  const STAR_GIF = "https://i.ibb.co/3mJFWyY/starfield-loop.gif";
 
   const ACCENTS = {
     green: {
@@ -17,6 +24,10 @@
     amber: {
       accent: "#fbbf24",
       soft: "rgba(251, 191, 36, 0.12)",
+    },
+    white: {
+      accent: "#ffffff",
+      soft: "rgba(255, 255, 255, 0.18)",
     },
   };
 
@@ -91,14 +102,10 @@
   }
 
   function clearTabCloak(save = true) {
-    // Reload original title from data attribute if present, else leave as-is
     const originalTitle = document.documentElement.getAttribute(
       "data-original-title"
     );
     if (originalTitle) document.title = originalTitle;
-
-    // Reset favicon to whatever is in HTML already
-    // (we don't store the original, so we just don't touch it.)
 
     if (save) {
       try {
@@ -126,20 +133,98 @@
     }
   }
 
+  // ---------- THEME (dark/light/baby/xmas) ----------
+
+  function applyTheme(theme, save = true) {
+    const t = theme || "dark";
+    document.documentElement.setAttribute("data-theme", t);
+    if (save) {
+      try {
+        localStorage.setItem(THEME_KEY, t);
+      } catch (_) {}
+    }
+  }
+
+  function loadTheme() {
+    let stored;
+    try {
+      stored = localStorage.getItem(THEME_KEY);
+    } catch (_) {
+      stored = null;
+    }
+    if (!stored) stored = "dark";
+    applyTheme(stored, false);
+    return stored;
+  }
+
+  // ---------- BACKGROUND (default / gif / custom) ----------
+
+  function applyBackground(mode, url, save = true) {
+    const body = document.body;
+    const m = mode || "default";
+
+    // reset inline overrides
+    body.style.backgroundImage = "";
+    body.style.backgroundSize = "";
+    body.style.backgroundAttachment = "";
+
+    if (m === "gif-stars") {
+      body.style.backgroundImage = `url("${STAR_GIF}")`;
+      body.style.backgroundSize = "cover";
+      body.style.backgroundAttachment = "fixed";
+    } else if (m === "custom" && url) {
+      body.style.backgroundImage = `url("${url}")`;
+      body.style.backgroundSize = "cover";
+      body.style.backgroundAttachment = "fixed";
+    }
+
+    if (save) {
+      try {
+        localStorage.setItem(BG_MODE_KEY, m);
+        if (m === "custom" && url) {
+          localStorage.setItem(BG_URL_KEY, url);
+        } else {
+          localStorage.removeItem(BG_URL_KEY);
+        }
+      } catch (_) {}
+    }
+  }
+
+  function loadBackground() {
+    let mode, url;
+    try {
+      mode = localStorage.getItem(BG_MODE_KEY) || "default";
+      url = localStorage.getItem(BG_URL_KEY) || "";
+    } catch (_) {
+      mode = "default";
+      url = "";
+    }
+    applyBackground(mode, url, false);
+    return { mode, url };
+  }
+
   // ---------- LOAD ON EVERY PAGE ----------
 
   function bootstrap() {
-    // store original title for reset
     if (!document.documentElement.getAttribute("data-original-title")) {
-      document.documentElement.setAttribute("data-original-title", document.title);
+      document.documentElement.setAttribute(
+        "data-original-title",
+        document.title
+      );
     }
 
     const activeAccent = loadAccent();
+    const activeTheme = loadTheme();
+    const bgState = loadBackground();
     loadTabCloak();
 
-    // Fire a simple event so pages can react if they want
     const evt = new CustomEvent("s0lace:settingsLoaded", {
-      detail: { accent: activeAccent },
+      detail: {
+        accent: activeAccent,
+        theme: activeTheme,
+        bgMode: bgState.mode,
+        bgUrl: bgState.url,
+      },
     });
     window.dispatchEvent(evt);
   }
@@ -152,5 +237,10 @@
     applyTabCloak,
     clearTabCloak,
     loadAccent,
+    applyTheme,
+    loadTheme,
+    applyBackground,
+    loadBackground,
+    MEDIA_CACHE_KEY, // if you want to use it elsewhere
   };
 })();
