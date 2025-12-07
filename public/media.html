@@ -57,30 +57,7 @@
 
       <div class="media-grid" id="media-grid">
         <!-- STATIC CARDS (kept no matter what TMDB does) -->
-        <a
-          class="media-card static-card"
-          href="#"
-          data-title="Interstellar"
-          data-tmdb-id="157336"
-        >
-          <div class="poster-thumb">
-            <img src="thumbs/interstellar-poster.jpg" alt="Interstellar" />
-            <div class="media-overlay">Interstellar</div>
-          </div>
-        </a>
 
-        <a
-          class="media-card static-card"
-          href="#"
-          data-title="Custom Stream"
-          data-src="/scramjet/https://example.com/my-custom-player"
-        >
-          <div class="poster-thumb">
-            <img src="thumbs/custom-example.jpg" alt="Custom Stream" />
-            <div class="media-overlay">Custom Stream</div>
-          </div>
-        </a>
-      </div>
 
       <div id="media-empty" style="display:none;">
         No media matches that search.
@@ -91,7 +68,7 @@
       // ========== CONFIG ==========
       // Use your TMDB v3 API key (the one that DOESN'T start with eyJ...)
       const TMDB_KEY = "2d1351cf74f73892042699d0431b799a"; // your key
-      const TMDB_IMG_BASE = "https://image.tmdb.org/t/p/"; // base you asked for
+      const TMDB_IMG_BASE = "https://image.tmdb.org/t/p/w600_and_h900_face/"; // base you asked for
       const TMDB_IMG_SIZE = "w342"; // size segment we append
 
       const mediaSearch = document.getElementById("media-search");
