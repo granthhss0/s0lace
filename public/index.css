@@ -806,6 +806,16 @@ h1::after {
   overflow: hidden;
 }
 
+.game-grid {
+  grid-template-columns: repeat(8, 1fr);
+}
+
+.media-grid,
+.app-grid {
+  grid-template-columns: repeat(6, 1fr);
+}
+
+
 /* ============ RESPONSIVE ============ */
 
 @media (max-width: 1400px) {
