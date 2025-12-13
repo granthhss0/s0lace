@@ -34,6 +34,52 @@
   100% { transform: translateX(-50%); }
 }
 
+/* ===== QUICK PANEL (VISITOR COUNTER + LINKS) ===== */
+
+.quick-panel {
+  position: fixed;
+  top: 10px;
+  right: 10px;
+  background: var(--panel);
+  border: 2px solid var(--border-hard);
+  padding: 12px;
+  font-family: "Press Start 2P";
+  font-size: 8px;
+  color: var(--fg);
+  box-shadow: 0 0 0 1px #000, 0 0 20px rgba(0,0,0,0.9);
+  z-index: 9999;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.visitor-count {
+  color: var(--accent);
+  text-shadow: 0 0 6px var(--accent);
+}
+
+.quick-links {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.quick-btn {
+  text-decoration: none;
+  text-align: center;
+  padding: 6px;
+  font-size: 8px;
+  border: 2px solid var(--accent);
+  background: var(--accent-soft);
+  color: var(--accent);
+}
+
+.quick-btn:hover {
+  background: rgba(0,255,127,0.25);
+  box-shadow: 0 0 14px rgba(0,255,127,0.6);
+}
+
+
 /* CATEGORY ICONS ABOVE POPULAR GAMES */
 
 .popular-filter-icons {
