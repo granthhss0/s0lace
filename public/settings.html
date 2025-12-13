@@ -17,20 +17,15 @@
       gap: 16px;
       margin-bottom: 30px;
     }
-
-    @media (max-width: 1000px) {
-      .settings-grid { grid-template-columns: repeat(2, 1fr); }
-    }
-    @media (max-width: 700px) {
-      .settings-grid { grid-template-columns: 1fr; }
-    }
+    @media (max-width: 1000px) { .settings-grid { grid-template-columns: repeat(2, 1fr); } }
+    @media (max-width: 700px) { .settings-grid { grid-template-columns: 1fr; } }
 
     .settings-panel {
       border: 2px solid var(--border-hard);
       background: var(--panel);
       padding: 16px;
-      box-shadow: 0 0 0 1px #000, 0 0 20px rgba(0,0,0,0.7);
-      font-family: "Press Start 2P", monospace;
+      box-shadow: 0 0 0 1px #000, 0 0 20px rgba(0,0,0,.7);
+      font-family: "Press Start 2P";
       font-size: 10px;
     }
 
@@ -63,12 +58,11 @@
       font-size: 9px;
       color: var(--accent);
       cursor: pointer;
-      text-align: center;
     }
 
     .settings-btn:hover {
-      background: rgba(0,255,127,0.25);
-      box-shadow: 0 0 14px rgba(0,255,127,0.6);
+      background: rgba(0,255,127,.25);
+      box-shadow: 0 0 14px rgba(0,255,127,.6);
     }
   </style>
 </head>
@@ -89,108 +83,19 @@
 
   <div class="settings-grid">
 
-    <!-- TAB CLOAKING -->
-    <section class="settings-panel">
-      <div class="settings-title">TAB CLOAKING</div>
-
-      <label>Preset</label>
-      <select id="cloak-select" class="settings-select">
-        <option value="">SELECT...</option>
-        <option value="drive">GOOGLE DRIVE</option>
-        <option value="schoology">SCHOOLOGY</option>
-        <option value="docs">GOOGLE DOCS</option>
-        <option value="google">GOOGLE</option>
-        <option value="custom">CUSTOM...</option>
-      </select>
-
-      <div id="custom-cloak-box" style="display:none; margin-top:12px;">
-        <label>Title
-          <input id="cloak-title" class="settings-input" />
-        </label>
-
-        <label>Favicon
-          <input id="cloak-icon" class="settings-input" />
-        </label>
-
-        <button class="settings-btn" id="apply-custom-cloak">APPLY</button>
-        <button class="settings-btn" id="reset-cloak">RESET</button>
-      </div>
-
-      <div id="cloak-status" style="margin-top:8px;font-size:8px;color:var(--fg-dim);"></div>
-    </section>
-
-    <!-- APPEARANCE -->
-    <section class="settings-panel">
-      <div class="settings-title">APPEARANCE</div>
-
-      <label>Theme</label>
-      <select id="theme-select" class="settings-select">
-        <option value="dark">DARK</option>
-        <option value="baby">BLUE</option>
-        <option value="xmas">GREEN</option>
-      </select>
-
-      <label style="margin-top:12px;">Accent</label>
-      <select id="accent-select" class="settings-select">
-        <option value="green">GREEN</option>
-        <option value="violet">VIOLET</option>
-        <option value="amber">AMBER</option>
-        <option value="white">WHITE</option>
-      </select>
-    </section>
-
-    <!-- BACKGROUND -->
-    <section class="settings-panel">
-      <div class="settings-title">BACKGROUND</div>
-
-      <label>Mode</label>
-      <select id="bg-mode" class="settings-select">
-        <option value="default">DEFAULT</option>
-        <option value="gif-stars">STARRY GIF</option>
-        <option value="custom">CUSTOM</option>
-      </select>
-
-      <div id="bg-url-row" style="display:none;margin-top:12px;">
-        <label>Image URL
-          <input id="bg-url" class="settings-input" />
-        </label>
-      </div>
-    </section>
-
-    <!-- SECURITY -->
-    <section class="settings-panel">
-      <div class="settings-title">SECURITY</div>
-
-      <label>
-        <input type="checkbox" id="anti-close-toggle" />
-        ENABLE ANTI-CLOSE
-      </label>
-
-      <button class="settings-btn" id="blank-launch">
-        LAUNCH IN ABOUT:BLANK
-      </button>
-    </section>
-
     <!-- SAVE FILE -->
     <section class="settings-panel">
       <div class="settings-title">SAVE FILE</div>
 
-      <button class="settings-btn" id="btn-export">
-        EXPORT SAVE
-      </button>
-
-      <button class="settings-btn" id="btn-import-trigger">
-        IMPORT SAVE
-      </button>
-
-      <input type="file" id="btn-import" accept=".json" style="display:none;" />
+      <button class="settings-btn" id="btn-export">EXPORT SAVE</button>
+      <button class="settings-btn" id="btn-import-trigger">IMPORT SAVE</button>
+      <input type="file" id="btn-import" accept=".json" hidden>
 
       <div style="font-size:8px;margin-top:8px;color:var(--fg-dim);">
         Saves settings + game progress
       </div>
     </section>
 
-    <!-- INFO -->
     <section class="settings-panel">
       <div class="settings-title">INFO</div>
       <a href="about.html"><button class="settings-btn">ABOUT US</button></a>
@@ -200,92 +105,61 @@
 </main>
 
 <script>
-/* ---------- TAB CLOAK ---------- */
-const PRESETS = {
-  drive:{enabled:true,title:"My Drive - Google Drive",iconHref:"https://ssl.gstatic.com/docs/doclist/images/drive_2022q3_32dp.png"},
-  schoology:{enabled:true,title:"Schoology",iconHref:"https://asset-cdn.schoology.com/sites/all/themes/schoology_theme/favicon.ico"},
-  docs:{enabled:true,title:"Google Docs",iconHref:"https://ssl.gstatic.com/docs/documents/images/kix-favicon7.ico"},
-  google:{enabled:true,title:"Google",iconHref:"favicon.ico"}
-};
+document.addEventListener("DOMContentLoaded", () => {
 
-const cloakSelect=document.getElementById("cloak-select");
-const customBox=document.getElementById("custom-cloak-box");
-const titleInput=document.getElementById("cloak-title");
-const iconInput=document.getElementById("cloak-icon");
-const statusEl=document.getElementById("cloak-status");
+  const exportBtn = document.getElementById("btn-export");
+  const importTrigger = document.getElementById("btn-import-trigger");
+  const importInput = document.getElementById("btn-import");
 
-cloakSelect.onchange=()=>{
-  const v=cloakSelect.value;
-  if(v==="custom"){customBox.style.display="block";return;}
-  customBox.style.display="none";
-  if(PRESETS[v]){
-    localStorage.setItem("s0laceTabCloak",JSON.stringify(PRESETS[v]));
-    window.S0LACE.applyTabCloak(PRESETS[v],true);
-    statusEl.textContent="Cloak applied.";
-  }
-};
+  /* ---------- EXPORT SAVE ---------- */
+  exportBtn.addEventListener("click", () => {
+    const saveData = {};
 
-document.getElementById("apply-custom-cloak").onclick=()=>{
-  if(!titleInput.value) return;
-  const cfg={enabled:true,title:titleInput.value,iconHref:iconInput.value};
-  localStorage.setItem("s0laceTabCloak",JSON.stringify(cfg));
-  window.S0LACE.applyTabCloak(cfg,true);
-  statusEl.textContent="Custom cloak applied.";
-};
+    Object.keys(localStorage).forEach(key => {
+      if (key.startsWith("s0lace") || key.startsWith("game_")) {
+        saveData[key] = localStorage.getItem(key);
+      }
+    });
 
-document.getElementById("reset-cloak").onclick=()=>{
-  localStorage.removeItem("s0laceTabCloak");
-  window.S0LACE.clearTabCloak(true);
-  statusEl.textContent="Cloak reset.";
-};
+    const blob = new Blob(
+      [JSON.stringify({ version: 1, data: saveData }, null, 2)],
+      { type: "application/json" }
+    );
 
-/* ---------- APPEARANCE ---------- */
-theme-select.onchange=e=>window.S0LACE.applyTheme(e.target.value,true);
-accent-select.onchange=e=>window.S0LACE.applyAccent(e.target.value,true);
-
-/* ---------- BACKGROUND ---------- */
-bg-mode.onchange=()=>{
-  bg-url-row.style.display=bg-mode.value==="custom"?"block":"none";
-  window.S0LACE.applyBackground(bg-mode.value,bg-url.value,true);
-};
-
-/* ---------- SECURITY ---------- */
-anti-close-toggle.checked=localStorage.getItem("s0laceAntiClose")==="1";
-anti-close-toggle.onchange=e=>{
-  e.target.checked?window.S0LACE.enableAntiClose():window.S0LACE.disableAntiClose();
-};
-
-blank-launch.onclick=()=>{
-  const w=window.open("about:blank","_blank");
-  if(!w) return alert("Popup blocked");
-  w.document.write(`<iframe src="${location.origin}/index.html" style="border:none;width:100vw;height:100vh"></iframe>`);
-};
-
-/* ---------- SAVE / LOAD ---------- */
-btn-export.onclick=()=>{
-  const data={};
-  Object.keys(localStorage).forEach(k=>{
-    if(k.startsWith("s0lace")||k.startsWith("game_")) data[k]=localStorage.getItem(k);
+    const a = document.createElement("a");
+    a.href = URL.createObjectURL(blob);
+    a.download = "s0lace-save.json";
+    a.click();
+    URL.revokeObjectURL(a.href);
   });
-  const blob=new Blob([JSON.stringify({data},null,2)],{type:"application/json"});
-  const a=document.createElement("a");
-  a.href=URL.createObjectURL(blob);
-  a.download="s0lace-save.json";
-  a.click();
-};
 
-btn-import-trigger.onclick=()=>btn-import.click();
-btn-import.onchange=e=>{
-  const f=e.target.files[0];
-  if(!f) return;
-  const r=new FileReader();
-  r.onload=()=>{
-    const j=JSON.parse(r.result).data||{};
-    Object.entries(j).forEach(([k,v])=>localStorage.setItem(k,v));
-    location.reload();
-  };
-  r.readAsText(f);
-};
+  /* ---------- IMPORT SAVE ---------- */
+  importTrigger.addEventListener("click", () => importInput.click());
+
+  importInput.addEventListener("change", () => {
+    const file = importInput.files[0];
+    if (!file) return;
+
+    const reader = new FileReader();
+    reader.onload = () => {
+      try {
+        const json = JSON.parse(reader.result);
+        if (!json.data) throw new Error();
+
+        Object.entries(json.data).forEach(([k, v]) => {
+          localStorage.setItem(k, v);
+        });
+
+        alert("Save imported successfully.");
+        location.reload();
+      } catch {
+        alert("Invalid save file.");
+      }
+    };
+    reader.readAsText(file);
+  });
+
+});
 </script>
 
 </body>
