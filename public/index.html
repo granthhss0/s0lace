@@ -20,6 +20,38 @@
   <script src="global-hub.js" defer></script>
 
   <style>
+    /* ================= HEADER SAFETY ================= */
+    body.sj-proxied .site-header {
+      position: relative !important;
+      pointer-events: none;
+      opacity: 0.9;
+    }
+
+    /* ================= PROXY BAR ================= */
+    #sj-form {
+      display: flex;
+      justify-content: center;
+      gap: 10px;
+    }
+
+    #sj-address {
+      width: min(520px, 85vw);
+      font-size: 16px;
+      padding: 14px 16px;
+      text-align: center;
+    }
+
+    .proxy-btn {
+      padding: 14px 18px;
+      font-size: 12px;
+    }
+
+    /* ================= MOTD ================= */
+    #motd {
+      text-align: center;
+      margin-bottom: 8px;
+    }
+
     /* bottom-left icons */
     #bottom-icons {
       position: fixed;
@@ -29,6 +61,7 @@
       gap: 12px;
       z-index: 999;
     }
+
     #bottom-icons img {
       width: 28px;
       height: 28px;
@@ -37,30 +70,35 @@
       transition: 0.2s;
       filter: brightness(0.85);
     }
+
     #bottom-icons img:hover {
       opacity: 1;
       filter: brightness(1.2) drop-shadow(0 0 6px var(--accent));
     }
 
-    /* Visitor panel (smaller + tighter) */
+    /* Visitor panel */
     #visitor-panel {
       margin-top: 10px;
       padding-top: 6px;
     }
+
     #visitor-panel .visitor-stats {
       display: flex;
       justify-content: space-around;
       padding: 8px 0;
     }
+
     .visitor-box {
       text-align: center;
       font-family: "Press Start 2P";
     }
+
     .visitor-label {
       font-size: 8px;
       color: var(--fg-dim);
       margin-bottom: 4px;
     }
+
     .visitor-number {
       font-size: 14px;
       color: var(--accent);
@@ -84,7 +122,6 @@
     <a href="games.html">Games</a>
     <a href="media.html">Media</a>
     <a href="settings.html">Settings</a>
-
   </nav>
 </header>
 
@@ -112,120 +149,9 @@
     </section>
   </section>
 
-  <!-- POPULAR GAMES (UNCHANGED) -->
-<section class="home-panel home-popular-panel">
-  <div class="motd-label">POPULAR GAMES</div>
-
-  <div class="popular-wrap">
-    <div class="popular-track">
-
-      <!-- LOOP 1 -->
-      <a class="popular-pill" href="player.html?game=games/retrobowl/index.html">
-        <span class="pill-thumb" style="background-image:url('thumbs/retrobowl.png')"></span>
-        <span class="pill-name">Retro Bowl</span>
-      </a>
-
-      <a class="popular-pill" href="player.html?game=games/balatro/index.html">
-        <span class="pill-thumb" style="background-image:url('thumbs/balatro.jpeg')"></span>
-        <span class="pill-name">Balatro</span>
-      </a>
-
-      <a class="popular-pill" href="player.html?game=games/geometrydash/index.html">
-        <span class="pill-thumb" style="background-image:url('thumbs/geometrydash.png')"></span>
-        <span class="pill-name">Geometry Dash</span>
-      </a>
-
-      <a class="popular-pill" href="player.html?game=games/monkey-mart/index.html">
-        <span class="pill-thumb" style="background-image:url('thumbs/monkey-mart.jpeg')"></span>
-        <span class="pill-name">Monkey Mart</span>
-      </a>
-
-      <a class="popular-pill" href="player.html?game=games/level-devil/index.html">
-        <span class="pill-thumb" style="background-image:url('thumbs/leveldevil.jpeg')"></span>
-        <span class="pill-name">Level Devil</span>
-      </a>
-
-      <a class="popular-pill" href="player.html?game=games/deadlydescent/index.html">
-        <span class="pill-thumb" style="background-image:url('thumbs/deadlydescent.jpeg')"></span>
-        <span class="pill-name">Deadly Descentspan>
-      </a>
-
-      <a class="popular-pill" href="player.html?game=games/gladdihoppers.html">
-        <span class="pill-thumb" style="background-image:url('thumbs/gladdihoppers.png')"></span>
-        <span class="pill-name">Gladihoppers</span>
-      </a>
-
-      <a class="popular-pill" href="player.html?game=games/snow-rider/index.html">
-        <span class="pill-thumb" style="background-image:url('thumbs/snow-rider.jpeg')"></span>
-        <span class="pill-name">Snow Rider 3D</span>
-      </a>
-
-
-      <a class="popular-pill" href="player.html?game=games/drift-boss/index.html">
-        <span class="pill-thumb" style="background-image:url('thumbs/drift-boss.jpeg')"></span>
-        <span class="pill-name">Drift Boss</span>
-      </a>
-
-       <a class="popular-pill" href="player.html?game=games/retrobowl/index.html">
-        <span class="pill-thumb" style="background-image:url('thumbs/retrobowl.png')"></span>
-        <span class="pill-name">Retro Bowl</span>
-      </a>
-
-      <a class="popular-pill" href="player.html?game=games/balatro/index.html">
-        <span class="pill-thumb" style="background-image:url('thumbs/balatro.jpeg')"></span>
-        <span class="pill-name">Balatro</span>
-      </a>
-
-      <a class="popular-pill" href="player.html?game=games/geometrydash/index.html">
-        <span class="pill-thumb" style="background-image:url('thumbs/geometrydash.png')"></span>
-        <span class="pill-name">Geometry Dash</span>
-      </a>
-
-      <a class="popular-pill" href="player.html?game=games/monkey-mart/index.html">
-        <span class="pill-thumb" style="background-image:url('thumbs/monkey-mart.jpeg')"></span>
-        <span class="pill-name">Monkey Mart</span>
-      </a>
-
-      <a class="popular-pill" href="player.html?game=games/level-devil/index.html">
-        <span class="pill-thumb" style="background-image:url('thumbs/leveldevil.jpeg')"></span>
-        <span class="pill-name">Level Devil</span>
-      </a>
-
-      <a class="popular-pill" href="player.html?game=games/deadlydescent/index.html">
-        <span class="pill-thumb" style="background-image:url('thumbs/deadlydescent.jpeg')"></span>
-        <span class="pill-name">Deadly Descentspan>
-      </a>
-
-      <a class="popular-pill" href="player.html?game=games/gladdihoppers.html">
-        <span class="pill-thumb" style="background-image:url('thumbs/gladdihoppers.png')"></span>
-        <span class="pill-name">Gladihoppers</span>
-      </a>
-
-      <a class="popular-pill" href="player.html?game=games/snow-rider/index.html">
-        <span class="pill-thumb" style="background-image:url('thumbs/snow-rider.jpeg')"></span>
-        <span class="pill-name">Snow Rider 3D</span>
-      </a>
-
-      <!-- LOOP 2 -->
-      <a class="popular-pill" href="player.html?game=games/retrobowl/index.html">
-        <span class="pill-thumb" style="background-image:url('thumbs/retrobowl.png')"></span>
-        <span class="pill-name">Retro Bowl</span>
-      </a>
-
-      <a class="popular-pill" href="player.html?game=games/drift-boss/index.html">
-        <span class="pill-thumb" style="background-image:url('thumbs/drift-boss.jpeg')"></span>
-        <span class="pill-name">Drift Boss</span>
-      </a>
-
-    </div>
-  </div>
-</section>
-
-
-  <!-- VISITOR COUNTER -->
+  <!-- VISITORS -->
   <section class="home-panel" id="visitor-panel">
     <div class="motd-label">VISITORS</div>
-
     <div class="visitor-stats">
       <div class="visitor-box">
         <div class="visitor-label">TODAY</div>
@@ -263,58 +189,10 @@ motdEl.onclick = setRandomMotd;
 setRandomMotd();
 </script>
 
-<!-- 🔥 FIREBASE VISITOR COUNTER (FIXED) -->
-<script type="module">
-import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js";
-import { getDatabase, ref, get, set } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-database.js";
-
-const firebaseConfig = {
-  apiKey: "AIzaSyBbgy76ThxHaKlOhpiLQ6Nw4ekR1b9t3DA",
-  authDomain: "s0lace-web.firebaseapp.com",
-  databaseURL: "https://s0lace-web-default-rtdb.firebaseio.com",
-  projectId: "s0lace-web",
-  storageBucket: "s0lace-web.firebasestorage.app",
-  messagingSenderId: "13647464646",
-  appId: "1:13647464646:web:1740543331353695faafc7"
-};
-
-const app = initializeApp(firebaseConfig);
-const db = getDatabase(app);
-
-function todayKey() {
-  return new Date().toISOString().split("T")[0];
-}
-function weekKey() {
-  const d = new Date();
-  const onejan = new Date(d.getFullYear(),0,1);
-  return "week_" + Math.ceil((((d - onejan) / 86400000) + onejan.getDay() + 1) / 7);
-}
-
-async function updateCounters(increment=false) {
-  const allRef = ref(db,"visitors/all");
-  const todayRef = ref(db,"visitors/today/"+todayKey());
-  const weekRef = ref(db,"visitors/week/"+weekKey());
-
-  const all = (await get(allRef)).val() || 0;
-  const today = (await get(todayRef)).val() || 0;
-  const week = (await get(weekRef)).val() || 0;
-
-  if (increment) {
-    await set(allRef, all+1);
-    await set(todayRef, today+1);
-    await set(weekRef, week+1);
-  }
-
-  document.getElementById("vis-all").textContent = all + (increment?1:0);
-  document.getElementById("vis-today").textContent = today + (increment?1:0);
-  document.getElementById("vis-week").textContent = week + (increment?1:0);
-}
-
-if (!sessionStorage.getItem("s0lace-counted")) {
-  sessionStorage.setItem("s0lace-counted","1");
-  updateCounters(true);
-} else {
-  updateCounters(false);
+<!-- SCRAMJET HEADER FIX -->
+<script>
+if (window.__scramjet || location.pathname.includes("/scram/")) {
+  document.body.classList.add("sj-proxied");
 }
 </script>
 
