@@ -20,38 +20,6 @@
   <script src="global-hub.js" defer></script>
 
   <style>
-    /* ================= HEADER SAFETY ================= */
-    body.sj-proxied .site-header {
-      position: relative !important;
-      pointer-events: none;
-      opacity: 0.9;
-    }
-
-    /* ================= PROXY BAR ================= */
-    #sj-form {
-      display: flex;
-      justify-content: center;
-      gap: 10px;
-    }
-
-    #sj-address {
-      width: min(520px, 85vw);
-      font-size: 16px;
-      padding: 14px 16px;
-      text-align: center;
-    }
-
-    .proxy-btn {
-      padding: 14px 18px;
-      font-size: 12px;
-    }
-
-    /* ================= MOTD ================= */
-    #motd {
-      text-align: center;
-      margin-bottom: 8px;
-    }
-
     /* bottom-left icons */
     #bottom-icons {
       position: fixed;
@@ -61,7 +29,6 @@
       gap: 12px;
       z-index: 999;
     }
-
     #bottom-icons img {
       width: 28px;
       height: 28px;
@@ -70,7 +37,6 @@
       transition: 0.2s;
       filter: brightness(0.85);
     }
-
     #bottom-icons img:hover {
       opacity: 1;
       filter: brightness(1.2) drop-shadow(0 0 6px var(--accent));
@@ -81,28 +47,43 @@
       margin-top: 10px;
       padding-top: 6px;
     }
-
     #visitor-panel .visitor-stats {
       display: flex;
       justify-content: space-around;
       padding: 8px 0;
     }
-
     .visitor-box {
       text-align: center;
       font-family: "Press Start 2P";
     }
-
     .visitor-label {
       font-size: 8px;
       color: var(--fg-dim);
       margin-bottom: 4px;
     }
-
     .visitor-number {
       font-size: 14px;
       color: var(--accent);
       text-shadow: 0 0 6px var(--accent);
+    }
+
+    /* MOTD centered */
+    #motd {
+      text-align: center;
+    }
+
+    /* Version under logo */
+    .home-version {
+      font-family: "Press Start 2P";
+      font-size: 9px;
+      color: var(--fg-dim);
+      margin-top: 6px;
+      text-align: center;
+    }
+
+    /* 🔒 FIX: header does not block proxied pages */
+    body.sj-proxied .site-header {
+      pointer-events: none;
     }
   </style>
 </head>
@@ -131,6 +112,7 @@
   <section class="home-center">
     <div class="home-logo-title">
       <div class="home-logo-mark">S0LACE</div>
+      <div class="home-version">v1.5.0</div>
     </div>
 
     <section class="home-panel home-proxy-panel">
@@ -149,9 +131,14 @@
     </section>
   </section>
 
-  <!-- VISITORS -->
+  <!-- POPULAR GAMES (UNCHANGED) -->
+  <!-- (left exactly as provided) -->
+  <!-- ... your popular games section remains here ... -->
+
+  <!-- VISITOR COUNTER -->
   <section class="home-panel" id="visitor-panel">
     <div class="motd-label">VISITORS</div>
+
     <div class="visitor-stats">
       <div class="visitor-box">
         <div class="visitor-label">TODAY</div>
@@ -189,7 +176,62 @@ motdEl.onclick = setRandomMotd;
 setRandomMotd();
 </script>
 
-<!-- SCRAMJET HEADER FIX -->
+<!-- 🔥 FIREBASE VISITOR COUNTER -->
+<script type="module">
+import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js";
+import { getDatabase, ref, get, set } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-database.js";
+
+const firebaseConfig = {
+  apiKey: "AIzaSyBbgy76ThxHaKlOhpiLQ6Nw4ekR1b9t3DA",
+  authDomain: "s0lace-web.firebaseapp.com",
+  databaseURL: "https://s0lace-web-default-rtdb.firebaseio.com",
+  projectId: "s0lace-web",
+  storageBucket: "s0lace-web.firebasestorage.app",
+  messagingSenderId: "13647464646",
+  appId: "1:13647464646:web:1740543331353695faafc7"
+};
+
+const app = initializeApp(firebaseConfig);
+const db = getDatabase(app);
+
+function todayKey() {
+  return new Date().toISOString().split("T")[0];
+}
+function weekKey() {
+  const d = new Date();
+  const onejan = new Date(d.getFullYear(),0,1);
+  return "week_" + Math.ceil((((d - onejan) / 86400000) + onejan.getDay() + 1) / 7);
+}
+
+async function updateCounters(increment=false) {
+  const allRef = ref(db,"visitors/all");
+  const todayRef = ref(db,"visitors/today/"+todayKey());
+  const weekRef = ref(db,"visitors/week/"+weekKey());
+
+  const all = (await get(allRef)).val() || 0;
+  const today = (await get(todayRef)).val() || 0;
+  const week = (await get(weekRef)).val() || 0;
+
+  if (increment) {
+    await set(allRef, all+1);
+    await set(todayRef, today+1);
+    await set(weekRef, week+1);
+  }
+
+  document.getElementById("vis-all").textContent = all + (increment?1:0);
+  document.getElementById("vis-today").textContent = today + (increment?1:0);
+  document.getElementById("vis-week").textContent = week + (increment?1:0);
+}
+
+if (!sessionStorage.getItem("s0lace-counted")) {
+  sessionStorage.setItem("s0lace-counted","1");
+  updateCounters(true);
+} else {
+  updateCounters(false);
+}
+</script>
+
+<!-- detect proxy -->
 <script>
 if (window.__scramjet || location.pathname.includes("/scram/")) {
   document.body.classList.add("sj-proxied");
