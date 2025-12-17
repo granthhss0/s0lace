@@ -92,7 +92,7 @@
 
     /* ===== SEARCH ===== */
     .proxy-wrap {
-      margin-top: 48px;
+      margin-top: 28px;
     }
 
     #sj-form {
@@ -219,26 +219,18 @@ window.addEventListener("storage", updateSideIcons);
 <script>
 function updateClock() {
   const d = new Date();
-  const h = d.getHours().toString().padStart(2,"0");
+  let h = d.getHours();
   const m = d.getMinutes().toString().padStart(2,"0");
-  document.getElementById("clock").textContent = `${h}:${m}`;
+  const ampm = h >= 12 ? "PM" : "AM";
+  h = h % 12;
+  h = h ? h : 12; // 0 -> 12
+  document.getElementById("clock").textContent = `${h}:${m} ${ampm}`;
 }
+
 updateClock();
 setInterval(updateClock, 1000);
-
-if ("getBattery" in navigator) {
-  navigator.getBattery().then(battery => {
-    function updateBattery() {
-      document.getElementById("battery").textContent =
-        Math.round(battery.level * 100) + "%";
-    }
-    updateBattery();
-    battery.addEventListener("levelchange", updateBattery);
-  });
-} else {
-  document.getElementById("battery").textContent = "—";
-}
 </script>
+
 
 <!-- FIREBASE VISITORS (FIXED) -->
 <script type="module">
