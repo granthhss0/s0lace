@@ -131,15 +131,32 @@
   <img src="thumbs/github.png" onclick="window.open('https://github.com/granthhss0/S0LACE','_blank')" />
 </div>
 
-<header class="site-header">
-  <div class="site-title">S0LACE</div>
-  <nav class="site-nav">
-    <a href="index.html" class="active">Home</a>
-    <a href="games.html">Games</a>
-    <a href="media.html">Media</a>
-    <a href="settings.html">Settings</a>
-  </nav>
-</header>
+<nav class="side-header">
+  <a href="index.html" class="side-icon" title="Home">
+    <svg viewBox="0 0 24 24">
+      <path d="M12 3 3 10v10h6v-6h6v6h6V10z"/>
+    </svg>
+  </a>
+
+  <a href="games.html" class="side-icon" title="Games">
+    <svg viewBox="0 0 24 24">
+      <path d="M7 6h10v12H7z"/>
+    </svg>
+  </a>
+
+  <a href="media.html" class="side-icon" title="Media">
+    <svg viewBox="0 0 24 24">
+      <path d="M4 6h16v12H4z"/>
+    </svg>
+  </a>
+
+  <a href="settings.html" class="side-icon" title="Settings">
+    <svg viewBox="0 0 24 24">
+      <path d="M12 8a4 4 0 1 0 4 4 4 4 0 0 0-4-4zm8.94 4a7.9 7.9 0 0 0-.14-1.4l2.1-1.6-2-3.4-2.5 1a8.4 8.4 0 0 0-1.2-.7l-.4-2.7h-4l-.4 2.7a8.4 8.4 0 0 0-1.2.7l-2.5-1-2 3.4 2.1 1.6a7.9 7.9 0 0 0 0 2.8l-2.1 1.6 2 3.4 2.5-1a8.4 8.4 0 0 0 1.2.7l.4 2.7h4l.4-2.7a8.4 8.4 0 0 0 1.2-.7l2.5 1 2-3.4-2.1-1.6a7.9 7.9 0 0 0 .14-1.4z"/>
+    </svg>
+  </a>
+</nav>
+
 
 <main class="home-main">
 
@@ -320,6 +337,13 @@ function setRandomMotd() {
 motdEl.onclick = setRandomMotd;
 setRandomMotd();
 </script>
+
+<script>
+document.querySelectorAll(".side-icon").forEach(a=>{
+  if (a.href === location.href) a.classList.add("active");
+});
+</script>
+
 
 <!-- Proxy detection -->
 <script>
