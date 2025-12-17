@@ -7,14 +7,38 @@
 
   <link rel="shortcut icon" href="favicon.ico" />
   <link rel="stylesheet" href="index.css" />
-
   <script src="global-hub.js" defer></script>
   <script src="register-sw.js" defer></script>
+
+  <style>
+    .media-row {
+      margin-top: 28px;
+    }
+
+    .media-row-title {
+      font-size: 12px;
+      letter-spacing: 1px;
+      color: var(--fg);
+      margin-bottom: 10px;
+    }
+
+    .media-row-track {
+      display: flex;
+      gap: 12px;
+      overflow-x: auto;
+      padding-bottom: 6px;
+      scrollbar-width: none;
+    }
+    .media-row-track::-webkit-scrollbar { display: none; }
+
+    .media-row .media-card {
+      min-width: 160px;
+    }
+  </style>
 </head>
 
 <body>
 
-<!-- SIDE ICON NAV -->
 <nav class="side-header">
   <a href="index.html" class="side-icon" data-icon="home"><img /></a>
   <a href="games.html" class="side-icon" data-icon="games"><img /></a>
@@ -23,8 +47,6 @@
 </nav>
 
 <main>
-
-  <!-- PAGE HEADER -->
   <div class="page-header">
     <h1>MEDIA</h1>
   </div>
@@ -32,184 +54,127 @@
   <!-- SEARCH -->
   <div class="games-search-wrap">
     <span class="search-label">SEARCH &gt;</span>
-    <input
-      id="media-search"
-      type="text"
-      placeholder="type a title and press Enter…"
-      autocomplete="off"
-    />
+    <input id="media-search" type="text" placeholder="type a title and press Enter…" />
   </div>
 
-  <!-- MOVIES -->
-  <section class="media-section">
-    <h2 class="media-section-title">POPULAR MOVIES</h2>
-    <div class="media-grid" id="movies-grid"></div>
-    <div id="media-empty-movies" class="media-empty">
-      No movies found.
-    </div>
+  <!-- CONTINUE WATCHING -->
+  <section class="media-row" id="continue-row" style="display:none;">
+    <div class="media-row-title">CONTINUE WATCHING</div>
+    <div class="media-row-track" id="continue-track"></div>
   </section>
 
-  <hr class="media-divider" />
+  <!-- TRENDING -->
+  <section class="media-row">
+    <div class="media-row-title">TRENDING NOW</div>
+    <div class="media-row-track" id="trending-row"></div>
+  </section>
 
-  <!-- TV -->
-  <section class="media-section">
-    <h2 class="media-section-title">POPULAR SHOWS</h2>
-    <div class="media-grid" id="tv-grid"></div>
-    <div id="media-empty-tv" class="media-empty">
-      No shows found.
-    </div>
+  <!-- ACTION -->
+  <section class="media-row">
+    <div class="media-row-title">ACTION</div>
+    <div class="media-row-track" id="action-row"></div>
+  </section>
+
+  <!-- HORROR -->
+  <section class="media-row">
+    <div class="media-row-title">HORROR</div>
+    <div class="media-row-track" id="horror-row"></div>
   </section>
 
 </main>
 
-<!-- ================= TMDB LOGIC ================= -->
 <script>
 const TMDB_KEY = "2d1351cf74f73892042699d0431b799a";
-const IMG_BASE = "https://image.tmdb.org/t/p/";
-const IMG_SIZE = "w600_and_h900_face";
+const IMG = "https://image.tmdb.org/t/p/w600_and_h900_face";
+const CONTINUE_KEY = "s0lace-continue";
 
-const mediaSearch = document.getElementById("media-search");
-const moviesGrid = document.getElementById("movies-grid");
-const tvGrid = document.getElementById("tv-grid");
-const moviesEmpty = document.getElementById("media-empty-movies");
-const tvEmpty = document.getElementById("media-empty-tv");
+function poster(path){ return path ? IMG+path : "thumbs/placeholder-poster.png"; }
 
-function poster(path, title) {
-  const img = document.createElement("img");
-  img.alt = title;
-  img.src = path ? IMG_BASE + IMG_SIZE + path : "thumbs/placeholder-poster.png";
-  return img;
-}
-
-function movieCard(m) {
-  const a = document.createElement("a");
-  a.className = "media-card movie-card";
-  a.href = "#";
-
-  const thumb = document.createElement("div");
-  thumb.className = "poster-thumb";
-
-  const overlay = document.createElement("div");
-  overlay.className = "media-overlay";
-  overlay.textContent = m.title || "Untitled";
-
-  thumb.append(poster(m.poster_path, m.title), overlay);
-  a.appendChild(thumb);
-
-  a.onclick = e => {
+function movieCard(m){
+  const a=document.createElement("a");
+  a.className="media-card";
+  a.href="#";
+  a.innerHTML=`<div class="poster-thumb">
+    <img src="${poster(m.poster_path)}">
+    <div class="media-overlay">${m.title}</div>
+  </div>`;
+  a.onclick=e=>{
     e.preventDefault();
-    location.href =
-      "mediaplayer.html?src=" +
-      encodeURIComponent("/scramjet/https://vidfast.pro/movie/" + m.id) +
-      "&title=" +
-      encodeURIComponent(m.title);
+    saveContinue({id:m.id,title:m.title,poster_path:m.poster_path,type:"movie"});
+    location.href=`mediaplayer.html?src=${encodeURIComponent("/scramjet/https://vidfast.pro/movie/"+m.id)}&title=${encodeURIComponent(m.title)}`;
   };
-
   return a;
 }
 
-function tvCard(s) {
-  const a = document.createElement("a");
-  a.className = "media-card tv-card";
-  a.href = "#";
-
-  const thumb = document.createElement("div");
-  thumb.className = "poster-thumb";
-
-  const overlay = document.createElement("div");
-  overlay.className = "media-overlay";
-  overlay.textContent = s.name || "Untitled";
-
-  thumb.append(poster(s.poster_path, s.name), overlay);
-  a.appendChild(thumb);
-
-  a.onclick = e => {
+function tvCard(s){
+  const a=document.createElement("a");
+  a.className="media-card";
+  a.href="#";
+  a.innerHTML=`<div class="poster-thumb">
+    <img src="${poster(s.poster_path)}">
+    <div class="media-overlay">${s.name}</div>
+  </div>`;
+  a.onclick=e=>{
     e.preventDefault();
-    location.href =
-      "tvplayer.html?id=" +
-      s.id +
-      "&title=" +
-      encodeURIComponent(s.name) +
-      "&season=1&episode=1";
+    saveContinue({id:s.id,title:s.name,poster_path:s.poster_path,type:"tv"});
+    location.href=`tvplayer.html?id=${s.id}&title=${encodeURIComponent(s.name)}&season=1&episode=1`;
   };
-
   return a;
 }
 
-async function loadTrending(type, grid, emptyEl) {
-  try {
-    const r = await fetch(
-      `https://api.themoviedb.org/3/trending/${type}/day?api_key=${TMDB_KEY}`
-    );
-    const d = await r.json();
-    grid.innerHTML = "";
-    emptyEl.style.display = "none";
-
-    d.results.slice(0, 24).forEach(item => {
-      grid.appendChild(type === "movie" ? movieCard(item) : tvCard(item));
-    });
-  } catch {
-    emptyEl.style.display = "block";
-  }
+/* CONTINUE WATCHING */
+function getContinue(){return JSON.parse(localStorage.getItem(CONTINUE_KEY)||"[]");}
+function saveContinue(item){
+  let list=getContinue().filter(i=>i.id!==item.id);
+  list.unshift(item);
+  localStorage.setItem(CONTINUE_KEY,JSON.stringify(list.slice(0,12)));
+}
+function renderContinue(){
+  const list=getContinue();
+  if(!list.length)return;
+  document.getElementById("continue-row").style.display="block";
+  const t=document.getElementById("continue-track");
+  t.innerHTML="";
+  list.forEach(i=>t.appendChild(i.type==="movie"?movieCard(i):tvCard(i)));
 }
 
-async function search(type, q, grid, emptyEl) {
-  if (!q) return loadTrending(type, grid, emptyEl);
-
-  try {
-    const r = await fetch(
-      `https://api.themoviedb.org/3/search/${type}?api_key=${TMDB_KEY}&query=${encodeURIComponent(q)}`
-    );
-    const d = await r.json();
-    grid.innerHTML = "";
-
-    if (!d.results.length) {
-      emptyEl.style.display = "block";
-      return;
-    }
-
-    emptyEl.style.display = "none";
-    d.results.slice(0, 30).forEach(item => {
-      grid.appendChild(type === "movie" ? movieCard(item) : tvCard(item));
-    });
-  } catch {
-    emptyEl.style.display = "block";
-  }
+/* COLLECTIONS */
+async function loadRow(url,target){
+  const r=await fetch(url).then(r=>r.json());
+  const el=document.getElementById(target);
+  r.results.slice(0,15).forEach(m=>el.appendChild(movieCard(m)));
 }
 
-document.addEventListener("DOMContentLoaded", () => {
-  loadTrending("movie", moviesGrid, moviesEmpty);
-  loadTrending("tv", tvGrid, tvEmpty);
+document.addEventListener("DOMContentLoaded",()=>{
+  renderContinue();
+  loadRow(`https://api.themoviedb.org/3/trending/movie/week?api_key=${TMDB_KEY}`,"trending-row");
+  loadRow(`https://api.themoviedb.org/3/discover/movie?api_key=${TMDB_KEY}&with_genres=28`,"action-row");
+  loadRow(`https://api.themoviedb.org/3/discover/movie?api_key=${TMDB_KEY}&with_genres=27`,"horror-row");
 
-  mediaSearch.addEventListener("keydown", e => {
-    if (e.key === "Enter") {
-      const q = mediaSearch.value.trim();
-      search("movie", q, moviesGrid, moviesEmpty);
-      search("tv", q, tvGrid, tvEmpty);
-    }
+  document.getElementById("media-search").addEventListener("keydown",e=>{
+    if(e.key!=="Enter")return;
+    const q=e.target.value.trim();
+    if(!q)location.reload();
+    fetch(`https://api.themoviedb.org/3/search/movie?api_key=${TMDB_KEY}&query=${encodeURIComponent(q)}`)
+      .then(r=>r.json()).then(d=>{
+        document.querySelectorAll(".media-row-track").forEach(r=>r.innerHTML="");
+        d.results.slice(0,30).forEach(m=>document.getElementById("trending-row").appendChild(movieCard(m)));
+      });
   });
 });
-</script>
 
-<!-- SIDE ICON SYNC -->
-<script>
-function getAccent() {
-  return localStorage.getItem("s0laceAccent") || "gray";
-}
-
-function updateSideIcons() {
-  const accent = getAccent();
-  document.querySelectorAll(".side-icon").forEach(link => {
-    const icon = link.dataset.icon;
-    const img = link.querySelector("img");
-    const active = location.pathname.endsWith(link.getAttribute("href"));
-    link.classList.toggle("active", active);
-    img.src = `thumbs/${icon}/${active ? accent : "gray"}.png`;
+/* SIDE ICONS */
+function updateSideIcons(){
+  const accent=localStorage.getItem("s0laceAccent")||"gray";
+  document.querySelectorAll(".side-icon").forEach(l=>{
+    const icon=l.dataset.icon;
+    const img=l.querySelector("img");
+    const active=location.pathname.endsWith(l.getAttribute("href"));
+    img.src=`thumbs/${icon}/${active?accent:"gray"}.png`;
   });
 }
-
 updateSideIcons();
-window.addEventListener("storage", updateSideIcons);
+window.addEventListener("storage",updateSideIcons);
 </script>
 
 </body>
