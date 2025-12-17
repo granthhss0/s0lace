@@ -15,19 +15,24 @@
 
   </head>
 
-  <body class="games-page">
-    <header class="site-header">
-      <div class="site-title">
-        S0LACE
-      </div>
-      <nav class="site-nav">
-        <a href="index.html">Home</a>
-        <a href="games.html" class="active">Games</a>
-        <a href="media.html">Media</a>
-        <a href="settings.html">Settings</a>
+  <nav class="side-header">
+  <a href="index.html" class="side-icon" data-icon="home">
+    <img />
+  </a>
 
-      </nav>
-    </header>
+  <a href="games.html" class="side-icon" data-icon="games">
+    <img />
+  </a>
+
+  <a href="media.html" class="side-icon" data-icon="media">
+    <img />
+  </a>
+
+  <a href="settings.html" class="side-icon" data-icon="settings">
+    <img />
+  </a>
+</nav>
+
 
     <main>
       <div class="page-header">
@@ -953,6 +958,34 @@
 
       <div id="game-empty">No games match that search.</div>
     </main>
+
+  <script>
+function getAccent() {
+  return localStorage.getItem("s0laceAccent") || "gray";
+}
+
+function updateSideIcons() {
+  const accent = getAccent();
+
+  document.querySelectorAll(".side-icon").forEach(link => {
+    const icon = link.dataset.icon;
+    const img = link.querySelector("img");
+
+    const isActive =
+      location.pathname.endsWith(link.getAttribute("href"));
+
+    link.classList.toggle("active", isActive);
+
+    img.src = `thumbs/${icon}/${isActive ? accent : "gray"}.png`;
+  });
+}
+
+updateSideIcons();
+
+// Update when accent color changes
+window.addEventListener("storage", updateSideIcons);
+</script>
+
 
     <script>
       const searchInput = document.getElementById("game-search");
