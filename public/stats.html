@@ -7,66 +7,47 @@
 
   <link rel="shortcut icon" href="favicon.ico" />
   <link rel="stylesheet" href="index.css" />
-
   <script src="global-hub.js" defer></script>
   <script src="register-sw.js" defer></script>
 
+  <!-- Chart.js -->
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+
   <style>
     main {
+      padding: 40px 24px;
       max-width: 900px;
       margin: 0 auto;
-      padding: 40px 32px;
-    }
-
-    .stats-section {
-      margin-bottom: 42px;
     }
 
     .stats-title {
-      font-size: 20px;
-      font-weight: 800;
-      margin-bottom: 16px;
-    }
-
-    .stats-grid {
-      display: grid;
-      grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
-      gap: 18px;
-    }
-
-    .stat-box {
-      background: rgba(255,255,255,0.03);
-      border: 1px solid rgba(255,255,255,0.08);
-      border-radius: 14px;
-      padding: 18px;
-      text-align: center;
-    }
-
-    .stat-label {
       font-family: "Press Start 2P";
-      font-size: 9px;
-      color: var(--fg-dim);
-      margin-bottom: 10px;
+      font-size: 12px;
+      margin: 28px 0 12px;
+      color: var(--fg);
     }
 
-    .stat-value {
-      font-size: 22px;
-      font-weight: 800;
-      color: var(--accent);
+    .stats-section {
+      margin-bottom: 40px;
     }
 
     .geo-list {
-      display: grid;
-      gap: 10px;
+      margin-top: 12px;
+      border-top: 1px solid #222;
     }
 
     .geo-item {
       display: flex;
       justify-content: space-between;
-      font-size: 13px;
-      padding: 10px 14px;
-      background: rgba(255,255,255,0.03);
-      border-radius: 10px;
+      padding: 6px 0;
+      font-size: 12px;
+      color: var(--fg-dim);
+    }
+
+    canvas {
+      background: rgba(255,255,255,0.02);
+      border-radius: 12px;
+      padding: 8px;
     }
   </style>
 </head>
@@ -83,40 +64,23 @@
 
 <main>
 
-  <div class="stats-section">
-    <div class="stats-title">VISITOR TOTALS</div>
-
-    <div class="stats-grid">
-      <div class="stat-box">
-        <div class="stat-label">TODAY</div>
-        <div class="stat-value" id="vis-today">—</div>
-      </div>
-
-      <div class="stat-box">
-        <div class="stat-label">THIS WEEK</div>
-        <div class="stat-value" id="vis-week">—</div>
-      </div>
-
-      <div class="stat-box">
-        <div class="stat-label">ALL TIME</div>
-        <div class="stat-value" id="vis-all">—</div>
-      </div>
-    </div>
-  </div>
+  <h1 class="stats-title">VISITOR STATS</h1>
 
   <div class="stats-section">
     <div class="stats-title">TOP COUNTRIES</div>
+    <canvas id="countriesChart" height="140"></canvas>
     <div class="geo-list" id="geo-countries"></div>
   </div>
 
   <div class="stats-section">
     <div class="stats-title">TOP REGIONS</div>
+    <canvas id="regionsChart" height="140"></canvas>
     <div class="geo-list" id="geo-regions"></div>
   </div>
 
 </main>
 
-<!-- SIDE ICON COLOR SYNC -->
+<!-- SIDE ICON SYNC -->
 <script>
 function getAccent() {
   return localStorage.getItem("s0laceAccent") || "gray";
@@ -137,7 +101,7 @@ updateSideIcons();
 window.addEventListener("storage", updateSideIcons);
 </script>
 
-<!-- FIREBASE STATS (SAFE, SINGLE APP) -->
+<!-- FIREBASE GEO STATS -->
 <script type="module">
 import { initializeApp, getApps } from
 "https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js";
@@ -153,56 +117,64 @@ const config = {
 const app = getApps().length ? getApps()[0] : initializeApp(config);
 const db = getDatabase(app);
 
-// DOM refs (THIS IS THE BUG FIX)
-const elAll = document.getElementById("vis-all");
-const elToday = document.getElementById("vis-today");
-const elWeek = document.getElementById("vis-week");
-const countriesEl = document.getElementById("geo-countries");
-const regionsEl = document.getElementById("geo-regions");
-
-const todayKey = () => new Date().toISOString().split("T")[0];
-const weekKey = () => {
-  const d = new Date(), j = new Date(d.getFullYear(),0,1);
-  return "week_" + Math.ceil((((d - j) / 86400000) + j.getDay() + 1) / 7);
-};
-
-async function loadCounters() {
-  const [a,t,w] = await Promise.all([
-    get(ref(db,"visitors/all")),
-    get(ref(db,"visitors/today/" + todayKey())),
-    get(ref(db,"visitors/week/" + weekKey()))
-  ]);
-
-  elAll.textContent = a.val() || 0;
-  elToday.textContent = t.val() || 0;
-  elWeek.textContent = w.val() || 0;
-}
-
-function renderGeo(list, container) {
-  container.innerHTML = "";
-  Object.entries(list || {})
+function renderGeo(data, listEl, canvasId) {
+  const entries = Object.entries(data || {})
     .sort((a,b) => b[1] - a[1])
-    .slice(0, 10)
-    .forEach(([name,count]) => {
-      const div = document.createElement("div");
-      div.className = "geo-item";
-      div.innerHTML = `<span>${name}</span><span>${count}</span>`;
-      container.appendChild(div);
-    });
+    .slice(0, 8);
+
+  listEl.innerHTML = "";
+
+  entries.forEach(([name,count]) => {
+    const row = document.createElement("div");
+    row.className = "geo-item";
+    row.innerHTML = `<span>${name}</span><span>${count}</span>`;
+    listEl.appendChild(row);
+  });
+
+  new Chart(document.getElementById(canvasId), {
+    type: "bar",
+    data: {
+      labels: entries.map(e => e[0]),
+      datasets: [{
+        data: entries.map(e => e[1]),
+        backgroundColor: "rgba(120,160,255,0.6)"
+      }]
+    },
+    options: {
+      responsive: true,
+      plugins: { legend: { display: false } },
+      scales: {
+        x: { ticks: { color: "#aaa" } },
+        y: { ticks: { color: "#aaa" } }
+      }
+    }
+  });
 }
 
-async function loadGeo() {
-  const [c,r] = await Promise.all([
+async function loadStats() {
+  const [countriesSnap, regionsSnap] = await Promise.all([
     get(ref(db,"geo/countries")),
     get(ref(db,"geo/regions"))
   ]);
 
-  renderGeo(c.val(), countriesEl);
-  renderGeo(r.val(), regionsEl);
+  if (countriesSnap.exists()) {
+    renderGeo(
+      countriesSnap.val(),
+      document.getElementById("geo-countries"),
+      "countriesChart"
+    );
+  }
+
+  if (regionsSnap.exists()) {
+    renderGeo(
+      regionsSnap.val(),
+      document.getElementById("geo-regions"),
+      "regionsChart"
+    );
+  }
 }
 
-loadCounters();
-loadGeo();
+loadStats();
 </script>
 
 </body>
