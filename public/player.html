@@ -35,11 +35,10 @@
 
 
     <main class="player-main">
-      <div class="player-info">
         <div class="player-left" id="media-title">Loading game…</div>
         <div class="player-actions">
-          <button type="button" id="reload-btn">↻ </button>
-          <button type="button" id="fullscreen-btn">⌞ ⌝ </button>
+          <button type="button" id="reload-btn">↻</button>
+          <button type="button" id="fullscreen-btn">⌞ ⌝</button>
         </div>
       </div>
 
@@ -120,7 +119,7 @@
       function updateFsLabel() {
         fullscreenBtn.textContent = isFullscreen()
           ? "Exit Fullscreen"
-          : "Fullscreen";
+          : "⌞ ⌝";
       }
 
       document.addEventListener("fullscreenchange", updateFsLabel);
