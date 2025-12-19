@@ -17,29 +17,15 @@
 <script src="global-hub.js" defer></script>
 
 <style>
-:root { 
-    --fg: #ffffff; 
-    --fg-dim: #888888; 
-    --accent: #00ffcc; 
-    --bg: #0a0a0a; 
-}
-
-body { 
-    min-height: 100vh; 
-    margin: 0; 
-    background: var(--bg); 
-    color: var(--fg); 
-    font-family: sans-serif; 
-    overflow-x: hidden; 
-}
-
+:root { --fg: #fff; --fg-dim: #888; --accent: #00ffcc; --bg: #0a0a0a; }
+body { min-height: 100vh; margin: 0; background: var(--bg); color: var(--fg); font-family: sans-serif; overflow-x: hidden; }
 main { min-height: 100vh; display: flex; justify-content: center; align-items: center; }
 
-/* --- LOADER --- */
-#loader {
+/* PROXY LOADING SCREEN (Hidden by default) */
+#proxy-loader {
     position: fixed; inset: 0; background: var(--bg); 
-    display: flex; flex-direction: column; justify-content: center; align-items: center;
-    z-index: 9999; transition: opacity 0.5s; font-family: 'Press Start 2P', cursive;
+    display: none; flex-direction: column; justify-content: center; align-items: center;
+    z-index: 9999; font-family: 'Press Start 2P', cursive;
 }
 .spinner { 
     width: 40px; height: 40px; border: 4px solid var(--fg-dim); 
@@ -48,22 +34,11 @@ main { min-height: 100vh; display: flex; justify-content: center; align-items: c
 }
 @keyframes spin { to { transform: rotate(360deg); } }
 
-/* --- UI --- */
 .home-wrap { max-width: 720px; width: 100%; padding: 32px; text-align: center; }
-.home-title { 
-    font-family: 'Press Start 2P', cursive; 
-    font-size: 54px; /* Slightly adjusted size for better fit */
-    font-weight: 800; 
-    color: var(--fg); 
-    margin: 0;
-}
+.home-title { font-family: 'Press Start 2P', cursive; font-size: 64px; font-weight: 800; color: var(--fg); margin: 0; }
 .home-version { margin-top: 14px; font-size: 10px; font-family: "Press Start 2P"; color: var(--fg-dim); }
 
-.home-status {
-  margin-top: 16px; font-family: "Press Start 2P"; font-size: 10px;
-  display: flex; justify-content: center; gap: 10px; color: var(--fg-dim);
-}
-
+.home-status { margin-top: 16px; font-family: "Press Start 2P"; font-size: 10px; display: flex; justify-content: center; gap: 10px; color: var(--fg-dim); }
 #clock { color: var(--fg); }
 #battery { color: var(--accent); }
 
@@ -73,20 +48,16 @@ main { min-height: 100vh; display: flex; justify-content: center; align-items: c
   background: rgba(255,255,255,0.05); color: var(--fg);
   border: 2px solid var(--accent); outline: none; box-sizing: border-box;
 }
-#sj-address:disabled { opacity: 0.4; cursor: not-allowed; }
 
-.visitor-meta {
-  margin-top: 36px; display: flex; justify-content: center; gap: 28px;
-  font-family: "Press Start 2P"; font-size: 10px; color: var(--fg-dim);
-}
+.visitor-meta { margin-top: 36px; display: flex; justify-content: center; gap: 28px; font-family: "Press Start 2P"; font-size: 10px; color: var(--fg-dim); }
 .visitor-meta span { color: var(--accent); }
 </style>
 </head>
 <body>
 
-<div id="loader">
+<div id="proxy-loader">
     <div class="spinner"></div>
-    <div style="font-size: 10px;">INITIALIZING S0LACE...</div>
+    <div style="font-size: 10px;">PROXIED PAGE LOADING...</div>
 </div>
 
 <nav class="side-header">
@@ -110,7 +81,7 @@ main { min-height: 100vh; display: flex; justify-content: center; align-items: c
   <div class="proxy-wrap">
     <form id="sj-form">
       <input type="hidden" id="sj-search-engine" value="https://www.google.com/search?q=%s">
-      <input id="sj-address" placeholder="Checking for Proxy Engine..." autocomplete="off" disabled>
+      <input id="sj-address" placeholder="Enter a URL or search Google" autocomplete="off">
     </form>
   </div>
 
@@ -123,7 +94,7 @@ main { min-height: 100vh; display: flex; justify-content: center; align-items: c
 </main>
 
 <script>
-// UI HANDLING
+// UI LOGIC
 function getAccent(){ return localStorage.getItem("s0laceAccent") || "gray"; }
 function updateIcons(){
   document.querySelectorAll(".side-icon").forEach(a => {
@@ -139,48 +110,38 @@ updateIcons();
 function updateClock(){
   const d = new Date();
   let h = d.getHours(), m = String(d.getMinutes()).padStart(2,"0");
-  const ap = h >= 12 ? "PM" : "AM"; h = h % 12 || 12;
+  const ap = h>=12?"PM":"AM"; h=h%12||12;
   document.getElementById("clock").textContent = `${h}:${m} ${ap}`;
 }
 updateClock(); setInterval(updateClock, 1000);
 
 if(navigator.getBattery){
   navigator.getBattery().then(b => {
-    const u = () => document.getElementById("battery").textContent = Math.round(b.level * 100) + "%";
-    u(); b.onlevelchange = u; b.onchargingchange = u;
+    const u = () => document.getElementById("battery").textContent = Math.round(b.level*100)+"%"
+    u(); b.onlevelchange=u; b.onchargingchange=u
   });
 }
 
-// PROXY INITIALIZATION CHECK
-function initProxy() {
-    if (window.scramjet || typeof scramjet !== 'undefined') {
-        document.getElementById('loader').style.opacity = '0';
-        setTimeout(() => document.getElementById('loader').style.display = 'none', 500);
-        document.getElementById('sj-address').disabled = false;
-        document.getElementById('sj-address').placeholder = "Enter a URL or search Google";
-    } else {
-        // If it takes more than 5 seconds, warn the user
-        setTimeout(() => {
-            if (document.getElementById('sj-address').disabled) {
-                document.getElementById('sj-address').placeholder = "Error: Scramjet files missing";
-            }
-        }, 5000);
-        setTimeout(initProxy, 200);
-    }
-}
-window.addEventListener('load', initProxy);
-
+// PROXY SUBMIT LOGIC
 document.getElementById("sj-form").addEventListener("submit", e => {
   e.preventDefault();
   const address = document.getElementById("sj-address").value.trim();
   if(!address) return;
+
   const engine = document.getElementById("sj-search-engine").value;
   const url = /^https?:\/\//i.test(address) ? address : engine.replace("%s", encodeURIComponent(address));
-  
-  if (window.scramjet) {
+
+  // Show the loader only after clicking Enter
+  document.getElementById('proxy-loader').style.display = 'flex';
+
+  if (window.scramjet || typeof scramjet !== 'undefined') {
       window.scramjet.open(url);
   } else {
-      alert("Proxy engine not found. Please upload the 'scram' folder.");
+      // Fallback: If scramjet isn't found, alert the user but keep the page alive
+      setTimeout(() => {
+          document.getElementById('proxy-loader').style.display = 'none';
+          alert("Error: Scramjet engine files are missing in /scram/ folder.");
+      }, 2000);
   }
 });
 </script>
@@ -218,9 +179,10 @@ async function initStats() {
         document.getElementById("vis-all").textContent = a.val() || 0;
         document.getElementById("vis-today").textContent = t.val() || 0;
         document.getElementById("vis-week").textContent = w.val() || 0;
-    } catch (e) { console.warn("Visitor Stats Error:", e); }
+    } catch (e) { console.warn("Visitor Stats Error", e); }
 }
 initStats();
 </script>
+
 </body>
 </html>
