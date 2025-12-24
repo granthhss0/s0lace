@@ -355,7 +355,7 @@
           return;
         }
 
-        // open in new tab (direct VidFast)
+        // open in new tab (
         if (openNewTabBtn) {
           openNewTabBtn.addEventListener("click", () => {
             const direct = `https://cinemaos.tech/player/${tmdbId}/${currentSeason}/${currentEpisode}`;
@@ -380,7 +380,7 @@
         }
 
         function updateFrame() {
-          const src = `/scramjet/https://vidfast.pro/tv/${tmdbId}/${currentSeason}/${currentEpisode}`;
+          const src = `/scramjet/https://cinemaos.tech/player/${tmdbId}/${currentSeason}/${currentEpisode}`;
           if (frame) frame.src = src;
           if (titleEl) {
             titleEl.textContent = `${titleParam}  S${currentSeason}E${currentEpisode}`;
