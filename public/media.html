@@ -1,532 +1,75 @@
 <!doctype html>
 <html>
-  <head>
-    <meta charset="utf-8" />
-    <meta
-      name="viewport"
-      content="width=device-width, initial-scale=1.0"
-    />
-    <title>S0LACE • Media</title>
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>S0LACE • Media</title>
+  <link rel="stylesheet" href="index.css" />
+  <script src="global-hub.js" defer></script>
+</head>
+<body>
 
-    <link rel="shortcut icon" content="favicon.ico" />
-    <link rel="stylesheet" href="index.css" />
-    <script src="global-hub.js" defer></script>
-    <script src="register-sw.js" defer></script>
-
-  </head>
-
-  <body>
-    <nav class="side-header">
-  <a href="index.html" class="side-icon" data-icon="home">
-    <img />
-  </a>
-
-  <a href="games.html" class="side-icon" data-icon="games">
-    <img />
-  </a>
-
-  <a href="media.html" class="side-icon" data-icon="media">
-    <img />
-  </a>
-
-  <a href="settings.html" class="side-icon" data-icon="settings">
-    <img />
-  </a>
+<nav class="side-header">
+  <a href="index.html" class="side-icon" data-icon="home"><img src="thumbs/home/white.png"/></a>
+  <a href="games.html" class="side-icon" data-icon="games"><img src="thumbs/games/white.png"/></a>
+  <a href="media.html" class="side-icon active" data-icon="media"><img src="thumbs/media/white.png"/></a>
+  <a href="settings.html" class="side-icon" data-icon="settings"><img src="thumbs/settings/white.png"/></a>
 </nav>
 
+<main>
+  <div class="page-header">
+    <h1>MEDIA HUB</h1>
+    <div class="sub">STREAMING VIA <span id="current-source-display">VIDFAST</span></div>
+  </div>
 
-    <main>
-      <div class="page-header">
-        <h1>MEDIA</h1>
-      </div>
+  <div class="games-search-wrap">
+    <input id="media-search" type="text" placeholder="SEARCH MOVIES & TV..." />
+  </div>
 
-      <div class="games-search-wrap">
-        <span class="search-label">SEARCH &gt;</span>
-        <input
-          id="media-search"
-          type="text"
-          placeholder="type a title and press Enter..."
-          autocomplete="off"
-        />
-      </div>
+  <div class="media-row">
+    <div class="media-row-title">POPULAR MOVIES</div>
+    <div class="media-row-track" id="movies-grid"></div>
+  </div>
 
-      <section class="media-section" id="continue-section" style="display:none;">
-        <div style="display:flex; justify-content:space-between; align-items:center;">
-            <h2 class="media-section-title" style="margin:0;">CONTINUE WATCHING</h2>
-            <button 
-              onclick="clearContinue()" 
-              style="background:transparent; border:1px solid #444; color:#888; cursor:pointer; font-size:9px; padding:4px 8px; font-family:'Press Start 2P';">
-              CLEAR
-            </button>
+  <div class="media-row">
+    <div class="media-row-title">TV SHOWS</div>
+    <div class="media-row-track" id="tv-grid"></div>
+  </div>
+</main>
+
+<script>
+  const TMDB_KEY = "2d1351cf74f73892042699d0431b799a";
+  const source = localStorage.getItem("s0laceMediaSource") || "vidfast";
+  document.getElementById("current-source-display").textContent = source.toUpperCase();
+
+  async function fetchMedia(type, containerId) {
+    const res = await fetch(`https://api.themoviedb.org/3/${type}/popular?api_key=${TMDB_KEY}`);
+    const data = await res.json();
+    const grid = document.getElementById(containerId);
+    
+    data.results.forEach(item => {
+      const card = document.createElement("div");
+      card.className = "game-card"; // Using your high-quality rounded class
+      card.innerHTML = `
+        <div class="game-thumb">
+          <img src="https://image.tmdb.org/t/p/w500${item.poster_path}" loading="lazy">
+          <div class="game-overlay">${(item.title || item.name).toUpperCase()}</div>
         </div>
-        <div class="media-grid" id="continue-grid" style="margin-top:10px;"></div>
-      </section>
-
-      <hr id="continue-divider"
-           style="display:none; border:0; border-top:1px solid #222; margin:20px 0;" />
-
-
-      <section class="media-section">
-        <h2 class="media-section-title">POPULAR MOVIES</h2>
-        <div class="media-grid" id="movies-grid"></div>
-        <div
-          id="media-empty-movies"
-          style="display:none; font-size: 8px; color:#7f7f7f; margin-top:8px;"
-        >
-          No movies found.
-        </div>
-      </section>
-
-      <hr style="border:0; border-top:1px solid #222; margin: 20px 0;" />
-
-      <section class="media-section">
-        <h2 class="media-section-title">POPULAR SHOWS</h2>
-        <div class="media-grid" id="tv-grid"></div>
-        <div
-          id="media-empty-tv"
-          style="display:none; font-size: 8px; color:#7f7f7f; margin-top:8px;"
-        >
-          No shows found.
-        </div>
-      </section>
-    </main>
-
-    <script>
-      // ===== TMDB CONFIG =====
-      const TMDB_KEY = "2d1351cf74f73892042699d0431b799a";
-      const TMDB_IMG_BASE = "https://image.tmdb.org/t/p/";
-      const TMDB_IMG_SIZE = "w600_and_h900_face"; 
-
-      const mediaSearch = document.getElementById("media-search");
-
-      const moviesGrid = document.getElementById("movies-grid");
-      const moviesEmpty = document.getElementById("media-empty-movies");
-
-      const tvGrid = document.getElementById("tv-grid");
-      const tvEmpty = document.getElementById("media-empty-tv");
-
-      // ===== NAV HELPERS =====
-
-      // Movies -> Check Settings for Source
-      function goToMoviePlayer(tmdbId, title) {
-        if (!tmdbId) return;
-
-        // Default to vidfast
-        const source = localStorage.getItem("s0laceMediaSource") || "vidfast";
-        let targetUrl = "";
-
-        if (source === "vidfast") {
-            // VidFast format: vidfast.pro/movie/{id}
-            targetUrl = "https://vidfast.pro/movie/" + encodeURIComponent(tmdbId);
+      `;
+      card.onclick = () => {
+        if (type === 'movie') {
+          const baseUrl = source === "vidfast" ? `https://vidfast.pro/movie/${item.id}` : `https://cinemaos.tech/player/${item.id}`;
+          window.location.href = `mediaplayer.html?src=${encodeURIComponent("/scramjet/" + baseUrl)}&title=${encodeURIComponent(item.title)}`;
         } else {
-            // CinemaOS format: cinemaos.tech/player/{id}
-            targetUrl = "https://cinemaos.tech/player/" + encodeURIComponent(tmdbId);
+          window.location.href = `tvplayer.html?id=${item.id}&title=${encodeURIComponent(item.name)}`;
         }
-
-        // Apply Proxy
-        const src = "/scramjet/" + targetUrl;
-
-        const url =
-          "mediaplayer.html?src=" +
-          encodeURIComponent(src) +
-          "&title=" +
-          encodeURIComponent(title || "Untitled");
-        window.location.href = url;
-      }
-
-      // TV -> tvplayer.html
-      // We pass the 'source' param so tvplayer.html can decide which URL to use
-      function goToTvPlayer(tmdbId, title, season, episode) {
-        if (!tmdbId) return;
-        
-        const source = localStorage.getItem("s0laceMediaSource") || "vidfast";
-
-        const url =
-          "tvplayer.html?id=" +
-          encodeURIComponent(tmdbId) +
-          "&title=" +
-          encodeURIComponent(title || "Untitled") +
-          "&season=" +
-          encodeURIComponent(season) +
-          "&episode=" +
-          encodeURIComponent(episode) +
-          "&source=" +
-          encodeURIComponent(source); // Passing source to tvplayer
-          
-        window.location.href = url;
-      }
-
-      // ===== CARD BUILDERS =====
-
-      function createPosterImg(posterPath, title) {
-        const img = document.createElement("img");
-        img.alt = title;
-        if (posterPath) {
-          img.src = TMDB_IMG_BASE + TMDB_IMG_SIZE + posterPath;
-        } else {
-          img.src = "thumbs/placeholder-poster.png";
-        }
-        return img;
-      }
-
-      function createMovieCard(movie) {
-        const id = movie.id;
-        const title = movie.title || movie.name || "Untitled";
-        const posterPath = movie.poster_path;
-
-        const a = document.createElement("a");
-        a.className = "media-card tmdb-card movie-card";
-        a.href = "#";
-        a.dataset.tmdbId = id;
-        a.dataset.title = title;
-
-        const thumb = document.createElement("div");
-        thumb.className = "poster-thumb";
-
-        const img = createPosterImg(posterPath, title);
-
-        const overlay = document.createElement("div");
-        overlay.className = "media-overlay";
-        overlay.textContent = title;
-
-        thumb.appendChild(img);
-        thumb.appendChild(overlay);
-        a.appendChild(thumb);
-
-        a.addEventListener("click", (e) => {
-          e.preventDefault();
-          goToMoviePlayer(id, title);
-        });
-
-        return a;
-      }
-
-      function createTvCard(show) {
-        const id = show.id;
-        const title = show.name || show.original_name || "Untitled";
-        const posterPath = show.poster_path;
-
-        const a = document.createElement("a");
-        a.className = "media-card tmdb-card tv-card";
-        a.href = "#";
-        a.dataset.tmdbId = id;
-        a.dataset.title = title;
-
-        const thumb = document.createElement("div");
-        thumb.className = "poster-thumb";
-
-        const img = createPosterImg(posterPath, title);
-
-        const overlay = document.createElement("div");
-        overlay.className = "media-overlay";
-        overlay.textContent = title;
-
-        thumb.appendChild(img);
-        thumb.appendChild(overlay);
-        a.appendChild(thumb);
-
-        a.addEventListener("click", (e) => {
-          e.preventDefault();
-          goToTvPlayer(id, title, 1, 1);
-        });
-
-        return a;
-      }
-
-      // ===== CLEAR HELPERS =====
-
-      function clearTmdbCardsInGrid(gridEl, className) {
-        if (!gridEl) return;
-        gridEl.querySelectorAll("." + className).forEach((el) => el.remove());
-      }
-
-      // ===== TRENDING LOADERS =====
-
-      async function loadTrendingMovies() {
-        try {
-          const res = await fetch(
-            `https://api.themoviedb.org/3/trending/movie/day?api_key=${TMDB_KEY}&language=en-US`
-          );
-          if (!res.ok) throw new Error("TMDB HTTP " + res.status);
-
-          const data = await res.json();
-          const results = data.results || [];
-
-          clearTmdbCardsInGrid(moviesGrid, "movie-card");
-          if (moviesEmpty) moviesEmpty.style.display = "none";
-
-          if (!results.length) {
-            if (moviesEmpty) moviesEmpty.style.display = "block";
-            return;
-          }
-
-          const fragment = document.createDocumentFragment();
-          results.slice(0, 24).forEach((m) => {
-            fragment.appendChild(createMovieCard(m));
-          });
-
-          moviesGrid.appendChild(fragment);
-        } catch (err) {
-          console.error("TMDB movie error", err);
-          if (moviesEmpty) moviesEmpty.style.display = "block";
-        }
-      }
-
-      async function loadTrendingTv() {
-        try {
-          const res = await fetch(
-            `https://api.themoviedb.org/3/trending/tv/day?api_key=${TMDB_KEY}&language=en-US`
-          );
-          if (!res.ok) throw new Error("TMDB HTTP " + res.status);
-
-          const data = await res.json();
-          const results = data.results || [];
-
-          clearTmdbCardsInGrid(tvGrid, "tv-card");
-          if (tvEmpty) tvEmpty.style.display = "none";
-
-          if (!results.length) {
-            if (tvEmpty) tvEmpty.style.display = "block";
-            return;
-          }
-
-          const fragment = document.createDocumentFragment();
-          results.slice(0, 24).forEach((s) => {
-            fragment.appendChild(createTvCard(s));
-          });
-
-          tvGrid.appendChild(fragment);
-        } catch (err) {
-          console.error("TMDB TV error", err);
-          if (tvEmpty) tvEmpty.style.display = "block";
-        }
-      }
-
-      // ===== SEARCH =====
-
-      async function searchMovies(query) {
-        const q = query.trim();
-        if (!q) {
-          await loadTrendingMovies();
-          return;
-        }
-
-        try {
-          const res = await fetch(
-            `https://api.themoviedb.org/3/search/movie?api_key=${TMDB_KEY}&language=en-US&include_adult=false&page=1&query=${encodeURIComponent(
-              q
-            )}`
-          );
-          if (!res.ok) throw new Error("TMDB HTTP " + res.status);
-
-          const data = await res.json();
-          const results = data.results || [];
-
-          clearTmdbCardsInGrid(moviesGrid, "movie-card");
-
-          if (!results.length) {
-            if (moviesEmpty) moviesEmpty.style.display = "block";
-            return;
-          }
-
-          if (moviesEmpty) moviesEmpty.style.display = "none";
-
-          const fragment = document.createDocumentFragment();
-          results.slice(0, 30).forEach((m) => {
-            fragment.appendChild(createMovieCard(m));
-          });
-
-          moviesGrid.appendChild(fragment);
-        } catch (err) {
-          console.error("TMDB movie search error", err);
-          if (moviesEmpty) moviesEmpty.style.display = "block";
-        }
-      }
-
-      async function searchTv(query) {
-        const q = query.trim();
-        if (!q) {
-          await loadTrendingTv();
-          return;
-        }
-
-        try {
-          const res = await fetch(
-            `https://api.themoviedb.org/3/search/tv?api_key=${TMDB_KEY}&language=en-US&include_adult=false&page=1&query=${encodeURIComponent(
-              q
-            )}`
-          );
-          if (!res.ok) throw new Error("TMDB HTTP " + res.status);
-
-          const data = await res.json();
-          const results = data.results || [];
-
-          clearTmdbCardsInGrid(tvGrid, "tv-card");
-
-          if (!results.length) {
-            if (tvEmpty) tvEmpty.style.display = "block";
-            return;
-          }
-
-          if (tvEmpty) tvEmpty.style.display = "none";
-
-          const fragment = document.createDocumentFragment();
-          results.slice(0, 30).forEach((s) => {
-            fragment.appendChild(createTvCard(s));
-          });
-
-          tvGrid.appendChild(fragment);
-        } catch (err) {
-          console.error("TMDB TV search error", err);
-          if (tvEmpty) tvEmpty.style.display = "block";
-        }
-      }
-
-      // ===== INIT =====
-
-      document.addEventListener("DOMContentLoaded", () => {
-        loadTrendingMovies();
-        loadTrendingTv();
-
-        if (mediaSearch) {
-          mediaSearch.addEventListener("keyup", (e) => {
-            if (e.key === "Enter") {
-              const q = mediaSearch.value || "";
-              searchMovies(q);
-              searchTv(q);
-            }
-          });
-        }
-      });
-    </script>
-
-    <script>
-/* ===== CONTINUE WATCHING ===== */
-const CONTINUE_KEY = "s0lace-continue";
-
-function getContinue() {
-  try {
-    return JSON.parse(localStorage.getItem(CONTINUE_KEY)) || [];
-  } catch {
-    return [];
-  }
-}
-
-function saveContinue(item) {
-  let list = getContinue().filter(i => i.id !== item.id);
-  list.unshift(item);
-  localStorage.setItem(CONTINUE_KEY, JSON.stringify(list.slice(0, 12)));
-}
-
-function clearContinue() {
-  if(!confirm("Clear continue watching history?")) return;
-  localStorage.removeItem(CONTINUE_KEY);
-  renderContinue();
-}
-
-function renderContinue() {
-  const grid = document.getElementById("continue-grid");
-  const section = document.getElementById("continue-section");
-  const divider = document.getElementById("continue-divider");
-
-  const items = getContinue();
-  if (!items.length) {
-    section.style.display = "none";
-    divider.style.display = "none";
-    grid.innerHTML = "";
-    return;
+      };
+      grid.appendChild(card);
+    });
   }
 
-  section.style.display = "block";
-  divider.style.display = "block";
-  grid.innerHTML = "";
-
-  items.forEach(item => {
-    const a = document.createElement("a");
-    a.className = "media-card";
-    a.href = "#";
-
-    a.innerHTML = `
-      <div class="poster-thumb">
-        <img src="${item.poster || "thumbs/placeholder-poster.png"}" />
-        <div class="media-overlay">${item.title}</div>
-      </div>
-    `;
-
-    a.onclick = e => {
-      e.preventDefault();
-      if (item.type === "movie") {
-        goToMoviePlayer(item.id, item.title);
-      } else {
-        goToTvPlayer(item.id, item.title, 1, 1);
-      }
-    };
-
-    grid.appendChild(a);
-  });
-}
-
-/* Inject saving into existing card clicks */
-const _movie = createMovieCard;
-createMovieCard = function(movie) {
-  const card = _movie(movie);
-  card.addEventListener("click", () => {
-    saveContinue({
-      id: movie.id,
-      title: movie.title || movie.name,
-      poster: movie.poster_path
-        ? TMDB_IMG_BASE + TMDB_IMG_SIZE + movie.poster_path
-        : null,
-      type: "movie"
-    });
-  });
-  return card;
-};
-
-const _tv = createTvCard;
-createTvCard = function(show) {
-  const card = _tv(show);
-  card.addEventListener("click", () => {
-    saveContinue({
-      id: show.id,
-      title: show.name || show.original_name,
-      poster: show.poster_path
-        ? TMDB_IMG_BASE + TMDB_IMG_SIZE + show.poster_path
-        : null,
-      type: "tv"
-    });
-  });
-  return card;
-};
-
-document.addEventListener("DOMContentLoaded", renderContinue);
+  fetchMedia('movie', 'movies-grid');
+  fetchMedia('tv', 'tv-grid');
 </script>
-
-
-    <script>
-function getAccent() {
-  return localStorage.getItem("s0laceAccent") || "gray";
-}
-
-function updateSideIcons() {
-  const accent = getAccent();
-
-  document.querySelectorAll(".side-icon").forEach(link => {
-    const icon = link.dataset.icon;
-    const img = link.querySelector("img");
-
-    const isActive =
-      location.pathname.endsWith(link.getAttribute("href"));
-
-    link.classList.toggle("active", isActive);
-
-    img.src = `thumbs/${icon}/${isActive ? accent : "gray"}.png`;
-  });
-}
-
-updateSideIcons();
-window.addEventListener("storage", updateSideIcons);
-</script>
-
-  </body>
+</body>
 </html>
