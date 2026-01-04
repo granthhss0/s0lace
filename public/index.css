@@ -2026,5 +2026,26 @@ a.game-card img {
   border-radius: 18px;
 }
 
+  .game-card {
+  all: unset;
+  display: inline-block;
 }
 
+  .game-thumb {
+  position: relative;
+  display: block;
+  border-radius: 18px;
+  overflow: hidden;
+}
+
+  .game-thumb img {
+  display: block;
+  width: 100%;
+  height: auto;
+  border-radius: inherit;
+}
+
+  .game-card {
+  cursor: pointer;
+  text-decoration: none;
+}
