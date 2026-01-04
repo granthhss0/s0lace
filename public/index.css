@@ -32,48 +32,6 @@
   padding: 16px;
 }
 
-/* ===== REMOVE SQUARE CARD BEHIND GAMES & MEDIA ===== */
-
-/* Section containers */
-.section,
-.section-inner,
-.section-content,
-.media-section,
-.games-section {
-  background: transparent !important;
-  box-shadow: none !important;
-  outline: none !important;
-}
-
-/* Grid wrappers */
-.grid,
-.grid-wrapper,
-.media-grid,
-.games-grid {
-  background: transparent !important;
-}
-
-/* Individual cards */
-.card,
-.media-card,
-.game-card {
-  background: rgba(255,255,255,0.04) !important;
-  backdrop-filter: blur(18px);
-  -webkit-backdrop-filter: blur(18px);
-  border-radius: 20px;
-  border: 1px solid rgba(255,255,255,0.08);
-  box-shadow: none !important;
-  overflow: hidden;
-}
-
-/* Kill invisible square overlays */
-.card::before,
-.card::after,
-.media-card::before,
-.game-card::before {
-  content: none !important;
-}
-
 /* ===== FORCE GLASS CONTINUE WATCHING ===== */
 
 /* The big gray container */
@@ -1840,6 +1798,48 @@ main.player-main {
   border-radius: 16px;
   overflow: hidden;
   background: transparent !important;
+}
+
+  /* ===== REMOVE SQUARE CARD BEHIND GAMES & MEDIA ===== */
+
+/* Section containers */
+.section,
+.section-inner,
+.section-content,
+.media-section,
+.games-section {
+  background: transparent !important;
+  box-shadow: none !important;
+  outline: none !important;
+}
+
+/* Grid wrappers */
+.grid,
+.grid-wrapper,
+.media-grid,
+.games-grid {
+  background: transparent !important;
+}
+
+/* Individual cards */
+.card,
+.media-card,
+.game-card {
+  background: rgba(255,255,255,0.04) !important;
+  backdrop-filter: blur(18px);
+  -webkit-backdrop-filter: blur(18px);
+  border-radius: 20px;
+  border: 1px solid rgba(255,255,255,0.08);
+  box-shadow: none !important;
+  overflow: hidden;
+}
+
+/* Kill invisible square overlays */
+.card::before,
+.card::after,
+.media-card::before,
+.game-card::before {
+  content: none !important;
 }
 
 }
