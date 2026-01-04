@@ -1621,4 +1621,32 @@ main.player-main {
   outline: none !important;
 }
 
+  /* KILL ALL LINK / FOCUS RINGS ON MEDIA CARDS */
+.media-card,
+.media-card:focus,
+.media-card:focus-visible,
+.media-card:active {
+  outline: none !important;
+  box-shadow: none !important;
+}
+
+/* ALSO KILL IT ON THE POSTER WRAPPER */
+.poster-thumb,
+.poster-thumb:focus,
+.poster-thumb:focus-visible {
+  outline: none !important;
+}
+
+/* PREVENT CHROME FROM DRAWING ACCESSIBILITY RING */
+.media-card {
+  -webkit-tap-highlight-color: transparent;
+}
+
+/* ENSURE IMAGE IS CLIPPED CLEANLY */
+.poster-thumb {
+  border-radius: 16px;
+  overflow: hidden;
+  background: transparent !important;
+}
+
 }
