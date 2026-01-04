@@ -628,6 +628,23 @@ body.sj-proxied .side-header {
   transform: translateY(-1px);
 }
 
+.media-card,
+.tmdb-card,
+.movie-card,
+.tv-card {
+  background: none !important;
+  box-shadow: none !important;
+  padding: 0 !important;
+}
+
+.poster-thumb {
+  background: none !important;
+  border: none !important;
+  border-radius: 16px;
+  overflow: hidden;
+}
+
+
 
 /* NAVIGATION FIXES — ALIGN ICON WITH TEXT */
 .site-nav a.account-link {
