@@ -15,6 +15,65 @@
   --header-h: 56px;
 }
 
+:root {
+  --glass-bg: rgba(18, 18, 18, 0.55);
+  --glass-border: rgba(255, 255, 255, 0.08);
+  --glass-hover: rgba(255, 255, 255, 0.15);
+  --glass-blur: blur(10px);
+}
+
+.panel,
+.media-section,
+.settings-panel {
+  background: var(--glass-bg);
+  backdrop-filter: var(--glass-blur);
+  border: 1px solid var(--glass-border);
+  border-radius: 14px;
+  padding: 16px;
+}
+
+.media-card {
+  background: transparent;
+  border-radius: 14px;
+  overflow: hidden;
+  border: 1px solid var(--glass-border);
+  transition: transform 0.15s ease, border-color 0.15s ease;
+}
+
+.media-card:hover {
+  transform: translateY(-3px);
+  border-color: var(--glass-hover);
+}
+
+.media-overlay {
+  background: rgba(0,0,0,0.55);
+  backdrop-filter: blur(6px);
+  border-top: 1px solid var(--glass-border);
+  font-size: 8px;
+  padding: 6px;
+}
+
+#media-search {
+  background: rgba(0,0,0,0.4);
+  backdrop-filter: blur(8px);
+  border: 1px solid var(--glass-border);
+  border-radius: 10px;
+  font-size: 9px;
+  padding: 8px 10px;
+}
+
+#continue-section button {
+  background: rgba(255,255,255,0.06);
+  border: 1px solid var(--glass-border);
+  border-radius: 8px;
+}
+
+.side-header {
+  backdrop-filter: blur(12px);
+  background: rgba(0,0,0,0.6);
+}
+
+
 .side-header {
   position: fixed;
   right: 16px;
