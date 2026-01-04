@@ -32,6 +32,20 @@
   padding: 16px;
 }
 
+.media-item {
+  background: rgba(255, 255, 255, 0.04);
+  backdrop-filter: blur(18px);
+  -webkit-backdrop-filter: blur(18px);
+  border-radius: 18px;
+  transition: background 0.25s ease, backdrop-filter 0.25s ease;
+}
+
+.media-item:hover {
+  background: rgba(255, 255, 255, 0.10); /* MORE transparent look */
+  backdrop-filter: blur(22px);
+}
+
+
 /* REMOVE BLOCK BACKGROUND FROM MEDIA GRID CELLS */
 .media-grid > *,
 .media-item {
@@ -40,12 +54,6 @@
   box-shadow: none !important;
 }
 
-.media-grid {
-  background: rgba(255,255,255,0.03);
-  backdrop-filter: blur(18px);
-  -webkit-backdrop-filter: blur(18px);
-  border-radius: 20px;
-}
 
 
 .media-card {
