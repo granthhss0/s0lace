@@ -2071,3 +2071,25 @@ a.game-card img {
   background: transparent;
 }
 
+  .game-thumb img {
+  display: block;            /* kills inline img box */
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+
+  background: transparent !important;
+  box-shadow: none !important;
+  outline: none !important;
+}
+
+  .game-thumb img {
+  display: block;            /* kills inline img box */
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+
+  background: transparent !important;
+  box-shadow: none !important;
+  outline: none !important;
+}
+
