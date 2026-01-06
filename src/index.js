@@ -102,27 +102,11 @@ function shutdown() {
   process.exit(0);
 }
 
-app.post("/api/ai", async (req, res) => {
-  try {
-    const response = await fetch(
-      "https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash:generateContent?key=" +
-        process.env.GEMINI_API_KEY,
-      {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(req.body),
-      }
-    );
+// Port config
+let port = parseInt(process.env.PORT || "");
+if (isNaN(port)) port = 8080;
 
-    const data = await response.json();
-    res.send(data);
-  } catch (err) {
-    res.status(500).send({ error: "AI backend failed" });
-  }
-});
-
-const PORT = process.env.PORT || 8080;
-
-app.listen(PORT, "0.0.0.0", () => {
-  console.log("Server running on port", PORT);
+fastify.listen({
+  port,
+  host: "0.0.0.0",
 });
