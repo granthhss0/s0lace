@@ -1,9 +1,9 @@
-# fly.toml app configuration file generated for s0lace on 2026-01-06T00:21:27Z
+# fly.toml app configuration file generated for isthisreallyabovechuckycheese on 2026-01-06T18:34:43Z
 #
 # See https://fly.io/docs/reference/configuration/ for information about how to use this file.
 #
 
-app = 's0lace'
+app = 'isthisreallyabovechuckycheese'
 primary_region = 'dfw'
 
 [build]
