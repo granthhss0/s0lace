@@ -1,0 +1,20 @@
+services:
+  - type: web
+    name: s0lace
+    env: docker
+    plan: free # Optional: defaults to starter/standard depending on account, 'free' is good for testing
+    dockerfilePath: ./Dockerfile
+    
+    # Render listens on port 10000 by default, but your Dockerfile exposes 8080.
+    # We must set the PORT env var so Render knows where to send traffic.
+    envVars:
+      - key: PORT
+        value: 8080
+      - key: NODE_ENV
+        value: production
+
+    # Health checks ensure the app is actually running before switching traffic
+    healthCheckPath: /
+    
+    # If your repo is in a subdirectory, uncomment and adjust the line below:
+    # rootDir: .
