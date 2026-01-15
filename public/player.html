@@ -26,36 +26,36 @@
         height: 100vh; width: 100%;
       }
 
-      /* SPLIT LAYOUT: Sidebar Ad + Game Frame */
+      /* SPLIT LAYOUT */
       .content-split {
         display: flex;
         flex: 1; /* Fills remaining height */
         overflow: hidden;
+        padding: 15px;
+        gap: 15px; /* Adds space between Ad and Game */
       }
 
-      /* LEFT AD SIDEBAR */
+      /* LEFT AD BOX - NOW SAME SIZE AS PLAYER */
       .ad-sidebar {
-        width: 320px; /* Standard width for square/medium rect ads */
-        min-width: 320px;
+        flex: 1; /* 50% Width */
         background: #050505;
-        border-right: 1px solid rgba(255, 255, 255, 0.1);
+        border: 2px solid #1a1a1a;
+        border-radius: 18px;
         display: flex;
         align-items: center;
         justify-content: center;
-        flex-direction: column;
-        padding: 10px;
-        box-sizing: border-box;
+        overflow: hidden;
       }
 
-      /* GAME CONTAINER */
+      /* GAME CONTAINER - NOW SAME SIZE AS AD */
       .player-frame-wrap {
-        flex: 1;
-        margin: 15px;
+        flex: 1; /* 50% Width */
         border-radius: 18px; 
         overflow: hidden;
         background: #000;
         box-shadow: 0 8px 20px rgba(0,0,0,0.4);
         position: relative;
+        display: flex; /* Ensures iframe fills it */
       }
 
       iframe {
@@ -83,20 +83,21 @@
       /* BOTTOM AD FOOTER */
       .ad-footer {
         width: 100%;
-        min-height: 100px; /* Space for the horizontal ad */
+        height: 110px; /* Fixed height for bottom banner */
         background: #050505;
         border-top: 1px solid rgba(255, 255, 255, 0.1);
         display: flex;
         align-items: center;
         justify-content: center;
-        padding: 10px 0;
+        flex-shrink: 0; /* Prevents it from squishing */
       }
 
-      .no-src { color: white; text-align: center; margin-top: 50px; }
+      .no-src { color: white; text-align: center; margin: auto; }
       
-      /* Hides ads on very small screens to save space for game */
-      @media (max-width: 700px) {
-        .ad-sidebar { display: none; }
+      /* Mobile adjustment: On phones, stack them instead of side-by-side */
+      @media (max-width: 768px) {
+        .content-split { flex-direction: column-reverse; }
+        .ad-sidebar { flex: 0 0 250px; } /* Fixed height on mobile */
       }
     </style>
   </head>
@@ -115,7 +116,7 @@
       <div class="content-split">
         <aside class="ad-sidebar">
           <ins class="adsbygoogle"
-               style="display:block"
+               style="display:block; width: 100%; height: 100%;"
                data-ad-client="ca-pub-8373843490344171"
                data-ad-slot="9410034190"
                data-ad-format="auto"
@@ -139,7 +140,7 @@
 
       <footer class="ad-footer">
         <ins class="adsbygoogle"
-             style="display:block"
+             style="display:block; width: 100%; max-height: 100px;"
              data-ad-client="ca-pub-8373843490344171"
              data-ad-slot="6020102457"
              data-ad-format="auto"
@@ -190,7 +191,7 @@
         doc.body.appendChild(iframe);
       });
 
-      // Fullscreen (Wraps the game area only, hides sidebar/ads)
+      // Fullscreen logic
       fullscreenBtn.addEventListener("click", () => {
         const target = wrap; 
         if (!document.fullscreenElement) {
