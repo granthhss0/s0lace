@@ -175,108 +175,91 @@
       </footer>
     </main>
 
-  <script>
-(async () => {
-  const params = new URLSearchParams(window.location.search);
-  const srcParam = params.get("game") || params.get("src");
+    <script>
+      (async () => {
+        const params = new URLSearchParams(window.location.search);
+        // Supports both 'game' (from player) and 'src' (from media player)
+        const srcParam = params.get("game") || params.get("src"); 
 
-  const frame = document.getElementById("media-frame");
-  const wrap = document.getElementById("frame-wrap");
-  const noSrc = document.getElementById("no-src-msg");
-  const loadingEl = document.getElementById("player-loading");
-  const loadingSub = document.getElementById("player-loading-sub");
+        const frame = document.getElementById("media-frame");
+        const wrap = document.getElementById("frame-wrap");
+        const noSrc = document.getElementById("no-src-msg");
+        const loadingEl = document.getElementById("player-loading");
+        const loadingSub = document.getElementById("player-loading-sub");
+        
+        const reloadBtn = document.getElementById("reload-btn");
+        const fullscreenBtn = document.getElementById("fullscreen-btn");
+        const blankBtn = document.getElementById("blank-btn");
 
-  const reloadBtn = document.getElementById("reload-btn");
-  const fullscreenBtn = document.getElementById("fullscreen-btn");
-  const blankBtn = document.getElementById("blank-btn");
+        if (!srcParam) {
+          frame.style.display = "none";
+          loadingEl.style.display = "none";
+          noSrc.style.display = "block";
+          document.querySelector('.player-actions').style.display = "none";
+          return;
+        }
 
-  if (!srcParam) {
-    frame.style.display = "none";
-    loadingEl.style.display = "none";
-    noSrc.style.display = "block";
-    document.querySelector(".player-actions").style.display = "none";
-    return;
-  }
+        const originalSrc = decodeURIComponent(srcParam);
 
-  const originalSrc = decodeURIComponent(srcParam);
+        /* --- BAREMUX / PROXY INIT --- */
+        try {
+          const connection = new BareMux.BareMuxConnection("/baremux/worker.js");
+          const wispUrl = (location.protocol === "https:" ? "wss" : "ws") + "://" + location.host + "/wisp/";
 
-  /* ----------------------------------------------------
-     🔴 HARD RULE: PROXIED GAMES MUST BE TOP-LEVEL
-     ---------------------------------------------------- */
-  const isProxied =
-    originalSrc.startsWith("/scram/") ||
-    originalSrc.includes("://") && originalSrc.includes("scram");
+          if ((await connection.getTransport()) !== "/epoxy/index.mjs") {
+            await connection.setTransport("/epoxy/index.mjs", [{ wisp: wispUrl }]);
+          }
+        } catch (err) {
+          console.error("BareMux Error", err);
+          if (loadingSub) loadingSub.textContent = "Proxy transport failed.";
+        }
 
-  if (isProxied) {
-    // Preserve history so back button works
-    history.replaceState(null, "", location.pathname);
-    window.location.href = originalSrc.startsWith("/scram/")
-      ? originalSrc
-      : `/scram/${encodeURIComponent(originalSrc)}`;
-    return;
-  }
+        /* --- IFRAME LOAD LOGIC --- */
+        frame.addEventListener("load", () => {
+          if (loadingEl) loadingEl.style.display = "none";
+        });
+        frame.src = originalSrc;
 
-  /* ----------------------------------------------------
-     🟢 NORMAL MEDIA / SAFE CONTENT → IFRAME
-     ---------------------------------------------------- */
+        /* --- BUTTON LOGIC --- */
+        reloadBtn.addEventListener("click", () => {
+          loadingEl.style.display = "flex";
+          frame.src = originalSrc;
+        });
 
-  try {
-    const connection = new BareMux.BareMuxConnection("/baremux/worker.js");
-    const wispUrl =
-      (location.protocol === "https:" ? "wss" : "ws") +
-      "://" + location.host + "/wisp/";
+        blankBtn.addEventListener("click", () => {
+          const win = window.open("about:blank", "_blank");
+          if (!win) { alert("Please allow popups"); return; }
+          const doc = win.document;
+          doc.title = "Classes";
+          doc.body.style.margin = "0";
+          doc.body.style.overflow = "hidden";
+          const iframe = doc.createElement("iframe");
+          iframe.style.width = "100%"; iframe.style.height = "100vh";
+          iframe.style.border = "none"; iframe.src = originalSrc;
+          doc.body.appendChild(iframe);
+        });
 
-    if ((await connection.getTransport()) !== "/epoxy/index.mjs") {
-      await connection.setTransport("/epoxy/index.mjs", [{ wisp: wispUrl }]);
-    }
-  } catch (err) {
-    console.error("BareMux Error", err);
-    loadingSub.textContent = "Proxy transport failed.";
-  }
+        fullscreenBtn.addEventListener("click", () => {
+          if (!document.fullscreenElement) {
+            if (wrap.requestFullscreen) wrap.requestFullscreen();
+            else if (wrap.webkitRequestFullscreen) wrap.webkitRequestFullscreen();
+          } else {
+            document.exitFullscreen();
+          }
+        });
+      })();
 
-  frame.addEventListener("load", () => {
-    loadingEl.style.display = "none";
-  });
-
-  frame.src = originalSrc;
-
-  /* ---------------- BUTTONS ---------------- */
-
-  reloadBtn.onclick = () => {
-    loadingEl.style.display = "flex";
-    frame.src = originalSrc;
-  };
-
-  blankBtn.onclick = () => {
-    const win = window.open("about:blank", "_blank");
-    if (!win) return alert("Allow popups");
-    win.document.body.style.margin = "0";
-    win.document.body.style.overflow = "hidden";
-    const iframe = win.document.createElement("iframe");
-    iframe.style.width = "100%";
-    iframe.style.height = "100vh";
-    iframe.style.border = "none";
-    iframe.src = originalSrc;
-    win.document.body.appendChild(iframe);
-  };
-
-  fullscreenBtn.onclick = () => {
-    if (!document.fullscreenElement) wrap.requestFullscreen();
-    else document.exitFullscreen();
-  };
-})();
-
-/* Sidebar icons */
-function updateSideIcons() {
-  const accent = localStorage.getItem("s0laceAccent") || "gray";
-  document.querySelectorAll(".side-icon").forEach(link => {
-    const icon = link.dataset.icon;
-    const img = link.querySelector("img");
-    const active = location.pathname.endsWith(link.getAttribute("href"));
-    img.src = `thumbs/${icon}/${active ? accent : "gray"}.png`;
-  });
-}
-updateSideIcons();
-</script>
+      // UI/Icons logic
+      function updateSideIcons() {
+        const accent = localStorage.getItem("s0laceAccent") || "gray";
+        document.querySelectorAll(".side-icon").forEach(link => {
+          const icon = link.dataset.icon;
+          const img = link.querySelector("img");
+          const isActive = location.pathname.endsWith(link.getAttribute("href"));
+          img.src = `thumbs/${icon}/${isActive ? accent : "gray"}.png`;
+        });
+      }
+      updateSideIcons();
+    </script>
   </body>
 </html>
