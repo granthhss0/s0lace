@@ -261,5 +261,38 @@
       }
       updateSideIcons();
     </script>
+
+    <script>
+/* === PLAYERV2 HARD FIX === */
+
+// Kill storage completely
+Object.defineProperty(window, "indexedDB", { value: null });
+Object.defineProperty(window, "openDatabase", { value: null });
+
+// Kill service workers
+if ("serviceWorker" in navigator) {
+  navigator.serviceWorker.getRegistrations?.().then(r =>
+    r.forEach(reg => reg.unregister())
+  );
+  Object.defineProperty(navigator, "serviceWorker", {
+    value: undefined
+  });
+}
+
+// Guard URL()
+const _URL = window.URL;
+window.URL = function(u, b) {
+  try { return new _URL(u, b); }
+  catch { return new _URL("about:blank"); }
+};
+window.URL.prototype = _URL.prototype;
+
+// Force clean reload once
+if (!sessionStorage.getItem("__pv2_boot")) {
+  sessionStorage.setItem("__pv2_boot", "1");
+  location.reload();
+}
+</script>
+
   </body>
 </html>
