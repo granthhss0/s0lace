@@ -12,6 +12,13 @@ self.addEventListener('fetch', (event) => {
     return;
   }
 
+  self.addEventListener("install", (event) => {
+  event.waitUntil(
+    indexedDB.deleteDatabase("scramjet")
+  );
+});
+
+
   event.respondWith((async () => {
     try {
       await scramjet.loadConfig();
