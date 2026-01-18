@@ -5,35 +5,26 @@ const scramjet = new ScramjetServiceWorker();
 
 self.addEventListener("fetch", event => {
   const req = event.request;
-  const url = req.url;
+  const url = new URL(req.url);
 
-  // 🔴 HARD BYPASS — do NOT touch these
-  if (
-    !url.startsWith("http://") &&
-    !url.startsWith("https://")
-  ) return;
-
-  if (
-    url.includes("googlesyndication.com") ||
-    url.includes("doubleclick.net") ||
-    url.includes("googleadservices.com") ||
-    url.includes("adtrafficquality.google")
-  ) {
-    return; // let browser handle it
-  }
-
-  // 🔴 Already proxied — DO NOT rewrap
-  if (url.includes("/scramjet/")) {
+  // Only handle http(s)
+  if (url.protocol !== "http:" && url.protocol !== "https:") {
     return;
   }
 
-  event.respondWith(handleScramjetFetch(event));
-});
+  // Hard bypass ads
+  if (
+    url.hostname.includes("googlesyndication.com") ||
+    url.hostname.includes("doubleclick.net") ||
+    url.hostname.includes("googleadservices.com") ||
+    url.hostname.includes("adtrafficquality.google")
+  ) {
+    return;
+  }
 
-
-  // Let TMDB images bypass Scramjet cleanly
-  if (url.hostname === 'image.tmdb.org') {
-    event.respondWith(fetch(event.request));
+  // TMDB images bypass
+  if (url.hostname === "image.tmdb.org") {
+    event.respondWith(fetch(req));
     return;
   }
 
@@ -45,12 +36,10 @@ self.addEventListener("fetch", event => {
         return scramjet.fetch(event);
       }
 
-      return fetch(event.request);
+      return fetch(req);
     } catch (err) {
-      console.error('[Scramjet SW] Fatal error, resetting:', err);
-
-      // HARD fallback — don't partially proxy
-      return fetch(event.request);
+      console.error("[Scramjet SW] Fatal error:", err);
+      return fetch(req);
     }
   })());
 });
