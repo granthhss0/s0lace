@@ -3,6 +3,27 @@ importScripts("/scram/scramjet.all.js");
 const { ScramjetServiceWorker } = $scramjetLoadWorker();
 const scramjet = new ScramjetServiceWorker();
 
+self.addEventListener("fetch", event => {
+  const req = event.request;
+  const url = new URL(req.url);
+
+  // If it's already scramjet, leave it alone
+  if (url.pathname.startsWith("/scramjet/")) {
+    event.respondWith(fetch(req));
+    return;
+  }
+
+  // Only proxy real navigations
+  if (req.mode === "navigate" && url.protocol === "https:") {
+    const proxied = "/scramjet/" + encodeURIComponent(url.href);
+    event.respondWith(fetch(proxied));
+    return;
+  }
+
+  event.respondWith(fetch(req));
+});
+
+
 self.addEventListener("install", event => {
   event.waitUntil(
     indexedDB.deleteDatabase("scramjet")
