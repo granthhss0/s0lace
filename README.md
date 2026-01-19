@@ -1,9 +1,9 @@
-# S0LACE 
+# s0lace
 cool site with lots of games, fast proxy, and every movie you want
 
 https://s0lace.fly.dev
 
-## 🚀 Quick Deploy (Free Options)
+##  Quick Deploy
 ## **NOTE:** S0LACE Cannot be hosted as a static site on sites such as Vercel, Github Pages, Netfliy, etc.
 [![Deploy to Render](https://binbashbanana.github.io/deploy-buttons/buttons/remade/render.svg)](https://render.com/deploy?repo=https://github.com/granthhss0/S0LACE)
 ### 1. Render (Recommended – Free tier)
